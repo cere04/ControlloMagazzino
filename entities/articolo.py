@@ -1,0 +1,26 @@
+from datetime import datetime
+from typing import Optional, List
+from .enums import TipologiaArticolo, GenereArticolo, UnitaMisura
+
+
+class Articolo:
+    def __init__(self,
+                 sku: str,
+                 nome: str,
+                 tipologia: TipologiaArticolo,
+                 genere: GenereArticolo,
+                 unita_misura: UnitaMisura,
+                 prezzo_acquisto: Optional[float] = None,
+                 prezzo_vendita: Optional[float] = None,
+                 ):
+        self.sku = sku
+        self.nome = nome
+        self.tipologia = tipologia
+        self.genere = genere
+        self.unita_misura = unita_misura
+        self.prezzo_acquisto = prezzo_acquisto
+        self.prezzo_vendita = prezzo_vendita
+
+    def __repr__(self):
+        return f"Articolo(sku={self.sku}, nome='{self.nome}', tipologia={self.tipologia}, " \
+               f"genere={self.genere}, unita_misura={self.unita_misura})"
