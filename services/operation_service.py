@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 from typing import List, Dict, Tuple
 
-
 def letturaDatabase(nome_file: str) -> List[Dict[str, any]]:
     """
     Legge il file di database e restituisce una lista di dizionari con i dati
@@ -39,7 +38,10 @@ def letturaDatabase(nome_file: str) -> List[Dict[str, any]]:
 
                     # Estrai e converti i campi
                     operazione = {
+                        'sku': campi[0],
                         'vendita': int(campi[1]),
+                        'giacenza': int(campi[2]),
+                        'paese': campi[3],
                         'data': datetime.strptime(campi[4], '%d-%m-%Y').date(),
                         'idOperazione': int(campi[5])
                     }
@@ -58,8 +60,7 @@ def letturaDatabase(nome_file: str) -> List[Dict[str, any]]:
 
     return operazioni
 
-
-def calcolaVenditeMensili(operazioni: List[Dict[str, any]]) -> List[int]:
+def calcolaVenditeTotali(operazioni: List[Dict[str, any]]) -> List[int]:
     """
     Calcola le vendite totali per ogni mese dell'anno
 
@@ -70,37 +71,78 @@ def calcolaVenditeMensili(operazioni: List[Dict[str, any]]) -> List[int]:
         Una lista con 12 elementi (uno per mese) contenente i totali delle vendite
     """
 
-    vendite_mensili = [0] * 12
+    vendite_totali = [0] * 12
 
     for op in operazioni:
         # Considera solo le operazioni di vendita (vendita positiva)
         if op['vendita'] > 0:
             mese = op['data'].month - 1  # Converti in indice (0-11)
             vendita = op['vendita']
-            vendite_mensili[mese] += vendita
+            vendite_totali[mese] += vendita
 
-    return vendite_mensili
+    return vendite_totali
 
-def visualizzaVenditeMensili(vendite_mensili: List[int]):
+def calcolaVenditeSKU(operazioni: List[Dict[str, any]]) -> List[int]:
     """
-    Visualizza i totali delle vendite per ogni mese
+    Calcola le vendite totali per ogni mese dell'anno
 
     Args:
-        vendite_mensili: lista con i totali delle vendite per ogni mese
+        operazioni: lista delle operazioni dal database
+
+    Returns:
+        Una lista con 12 elementi (uno per mese) contenente i totali delle vendite
     """
-    mesi = [
-        "Gennaio", "Febbraio", "Marzo", "Aprile",
-        "Maggio", "Giugno", "Luglio", "Agosto",
-        "Settembre", "Ottobre", "Novembre", "Dicembre"
-    ]
 
-    print("\n=== VENDITE MENSILI ===")
-    for i, totale in enumerate(vendite_mensili):
-        print(f"{mesi[i]}: {totale}")
-    print("======================")
+    vendite_totali = [0] * 12
 
-    return
+    for op in operazioni:
+        # Considera solo le operazioni di vendita (vendita positiva)
+        if op['vendita'] > 0:
+            mese = op['data'].month - 1  # Converti in indice (0-11)
+            vendita = op['vendita']
+            vendite_totali[mese] += vendita
 
+    return vendite_totali
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# def visualizzaVenditeMensili(vendite_mensili: List[int]):
+#     """
+#     Visualizza i totali delle vendite per ogni mese
+#
+#     Args:
+#         vendite_mensili: lista con i totali delle vendite per ogni mese
+#     """
+#     mesi = [
+#         "Gennaio", "Febbraio", "Marzo", "Aprile",
+#         "Maggio", "Giugno", "Luglio", "Agosto",
+#         "Settembre", "Ottobre", "Novembre", "Dicembre"
+#     ]
+#
+#     print("\n=== VENDITE MENSILI ===")
+#     for i, totale in enumerate(vendite_mensili):
+#         print(f"{mesi[i]}: {totale}")
+#     print("======================")
+
+
+# test funzioni
 # 1. Leggi il database
 operazioni = letturaDatabase("../databaseOperazioni.txt")
 
@@ -110,10 +152,10 @@ else:
     print(f"Lettura completata. Trovate {len(operazioni)} operazioni")
 
     # 2. Calcola le vendite per ogni mese
-    vendite_mensili = calcolaVenditeMensili(operazioni)
+    vendite_mensili = calcolaVenditeTotali(operazioni)
 
     # 3. Visualizza i risultati
-    visualizzaVenditeMensili(vendite_mensili)
+    # visualizzaVenditeMensili(vendite_mensili)
 
 
 # operazioni = letturaDatabase("../databaseOperazioni.txt")
