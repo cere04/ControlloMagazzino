@@ -59,26 +59,62 @@ def letturaDatabase(nome_file: str) -> List[Dict[str, any]]:
     return operazioni
 
 
-def calcolaVenditeMensili(operazioni: List[Dict[str, any]], mese: int) -> Tuple[int, Dict[str, int]]:
+def calcolaVenditeMensili(operazioni: List[Dict[str, any]]) -> List[int]:
     """
-    Calcola le vendite totali per un mese specifico
+    Calcola le vendite totali per ogni mese dell'anno
 
     Args:
         operazioni: lista delle operazioni dal database
-        mese: mese da analizzare (1-12)
 
     Returns:
-        Una tupla con (vendite_totali)
+        Una lista con 12 elementi (uno per mese) contenente i totali delle vendite
     """
-    vendite_totali = 0
+
+    vendite_mensili = [0] * 12
 
     for op in operazioni:
-        # Considera solo le operazioni di vendita (vendita negativa)
-        if op['vendita'] > 0 and op['data'].month == mese:
+        # Considera solo le operazioni di vendita (vendita positiva)
+        if op['vendita'] > 0:
+            mese = op['data'].month - 1  # Converti in indice (0-11)
             vendita = op['vendita']
-            vendite_totali += vendita
+            vendite_mensili[mese] += vendita
 
-    print(vendite_totali)
+    return vendite_mensili
 
+def visualizzaVenditeMensili(vendite_mensili: List[int]):
+    """
+    Visualizza i totali delle vendite per ogni mese
+
+    Args:
+        vendite_mensili: lista con i totali delle vendite per ogni mese
+    """
+    mesi = [
+        "Gennaio", "Febbraio", "Marzo", "Aprile",
+        "Maggio", "Giugno", "Luglio", "Agosto",
+        "Settembre", "Ottobre", "Novembre", "Dicembre"
+    ]
+
+    print("\n=== VENDITE MENSILI ===")
+    for i, totale in enumerate(vendite_mensili):
+        print(f"{mesi[i]}: {totale}")
+    print("======================")
+
+    return
+
+# 1. Leggi il database
 operazioni = letturaDatabase("../databaseOperazioni.txt")
-calcolaVenditeMensili(operazioni, 3)
+
+if not operazioni:
+    print("Nessuna operazione trovata nel database")
+else:
+    print(f"Lettura completata. Trovate {len(operazioni)} operazioni")
+
+    # 2. Calcola le vendite per ogni mese
+    vendite_mensili = calcolaVenditeMensili(operazioni)
+
+    # 3. Visualizza i risultati
+    visualizzaVenditeMensili(vendite_mensili)
+
+
+# operazioni = letturaDatabase("../databaseOperazioni.txt")
+# calcolaVenditeMensili(operazioni, 3)
