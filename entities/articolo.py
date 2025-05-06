@@ -10,16 +10,12 @@ class Articolo:
                  tipologia: TipologiaArticolo,
                  genere: GenereArticolo,
                  unita_misura: UnitaMisura,
-                 prezzo_acquisto: Optional[float] = None,
-                 prezzo_vendita: Optional[float] = None,
                  ):
         self.sku = sku
         self.nome = nome
         self.tipologia = tipologia
         self.genere = genere
         self.unita_misura = unita_misura
-        self.prezzo_acquisto = prezzo_acquisto
-        self.prezzo_vendita = prezzo_vendita
 
     def __repr__(self):
         return f"Articolo(sku={self.sku}, nome='{self.nome}', tipologia={self.tipologia}, " \
