@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 
 def letturaDatabaseOperazioni(nome_file: str) -> List[Dict[str, any]]:
     """
@@ -12,12 +12,12 @@ def letturaDatabaseOperazioni(nome_file: str) -> List[Dict[str, any]]:
     Returns:
         Lista di dizionari con i dati delle operazioni
     """
-    operazioni = []
+    lista_operazioni = []
 
     # Verifica se il file esiste
     if not os.path.exists(nome_file):
         print(f"Errore: il file {nome_file} non esiste")
-        return operazioni
+        return lista_operazioni
 
     try:
         with open(nome_file, 'r') as file:
@@ -46,7 +46,7 @@ def letturaDatabaseOperazioni(nome_file: str) -> List[Dict[str, any]]:
                         'idOperazione': int(campi[5])
                     }
 
-                    operazioni.append(operazione)
+                    lista_operazioni.append(operazione)
 
                 except ValueError as e:
                     print(f"Errore conversione dati nella linea {linea}: {e}")
@@ -58,7 +58,7 @@ def letturaDatabaseOperazioni(nome_file: str) -> List[Dict[str, any]]:
     except Exception as e:
         print(f"Errore durante la lettura del file: {e}")
 
-    return operazioni
+    return lista_operazioni
 
 def letturaDatabaseArticoli(nome_file: str) -> List[Dict[str, str]]:
     """
@@ -70,7 +70,7 @@ def letturaDatabaseArticoli(nome_file: str) -> List[Dict[str, str]]:
     Returns:
         Lista di dizionari con i dati degli articoli
     """
-    articoli = []
+    lista_articoli = []
 
     try:
         with open(nome_file, 'r') as file:
@@ -83,7 +83,7 @@ def letturaDatabaseArticoli(nome_file: str) -> List[Dict[str, str]]:
                 if len(campi) != 3:
                     continue
 
-                articoli.append({
+                lista_articoli.append({
                     'sku': campi[0],
                     'genere': campi[1],
                     'tipologia': campi[2]
@@ -94,14 +94,14 @@ def letturaDatabaseArticoli(nome_file: str) -> List[Dict[str, str]]:
     except Exception as e:
         print(f"Errore durante la lettura del file articoli: {e}")
 
-    return articoli
+    return lista_articoli
 
-def calcolaVenditeTotali(operazioni: List[Dict[str, any]]) -> List[int]:
+def calcolaVenditeTotali(lista_operazioni: List[Dict[str, any]]) -> List[int]:
     """
     Calcola le vendite totali per ogni mese dell'anno
 
     Args:
-        operazioni: lista delle operazioni dal database
+        lista_operazioni: lista delle operazioni dal database
 
     Returns:
         Una lista con 12 elementi (uno per mese) contenente i totali delle vendite
@@ -109,7 +109,7 @@ def calcolaVenditeTotali(operazioni: List[Dict[str, any]]) -> List[int]:
 
     vendite_totali = [0] * 12
 
-    for op in operazioni:
+    for op in lista_operazioni:
         # Considera solo le operazioni di vendita (vendita positiva)
         if op['vendita'] > 0:
             mese = op['data'].month - 1  # Converti in indice (0-11)
@@ -118,7 +118,7 @@ def calcolaVenditeTotali(operazioni: List[Dict[str, any]]) -> List[int]:
 
     return vendite_totali
 
-def filtroSKU(operazioni: List[Dict[str, any]], sku_list: List[str]) -> List[int]:
+def filtroSKU(lista_operazioni: List[Dict[str, any]], sku_list: List[str]) -> list[dict[str, Any]]:
     """
     Calcola le vendite totali per ogni mese dell'anno
 
@@ -127,87 +127,98 @@ def filtroSKU(operazioni: List[Dict[str, any]], sku_list: List[str]) -> List[int
 
     Returns:
         Una lista con 12 elementi (uno per mese) contenente i totali delle vendite
+        :param lista_operazioni:
+        :param sku_list:
     """
 
     if not sku_list:
-        return operazioni
+        return lista_operazioni
 
     sku_set = set(sku_list)
-    return[op for op in operazioni if op['sku'] in sku_set]
+    return[op for op in lista_operazioni if op['sku'] in sku_set]
 
 
-def filtroGenere(operazioni: List[Dict[str, any]], articoli: List[Dict[str, any]], generi: List[str]) -> List[Dict[str, any]]:
+def filtroGenere(lista_operazioni: List[Dict[str, any]], lista_articoli: List[Dict[str, any]], generi: List[str]) -> List[Dict[str, any]]:
     """
     Filtra le operazioni per genere (uomo/donna)
 
     Args:
-        operazioni: lista delle operazioni da filtrare
+        lista_operazioni: lista delle operazioni da filtrare
         generi: lista di generi da includere ('uomo', 'donna')
 
     Returns:
         Lista filtrata delle operazioni
+        :param generi:
+        :param lista_operazioni:
+        :param lista_articoli:
     """
     if not generi:
-        return operazioni
+        return lista_operazioni
 
     test = []
 
-    for art in articoli:
+    for art in lista_articoli:
         if art['genere'] in generi:
             test.append(art['sku'])
 
-    return [op for op in operazioni if op['sku'] in test]
+    return [op for op in lista_operazioni if op['sku'] in test]
 
-# def filtroTipologia(operazioni: List[Dict[str, any]], tipologie: List[str]) -> List[Dict[str, any]]:
-#     """
-#     Filtra le operazioni per tipologia (calzatura, borsa, capi di abbigliamento)
-#
-#     Args:
-#         operazioni: lista delle operazioni da filtrare
-#         tipologie: lista di tipologie da includere
-#
-#     Returns:
-#         Lista filtrata delle operazioni
-#     """
-#     if not tipologie or not DATABASE_ARTICOLI:
-#         return operazioni
-#
-#     # Crea un set di SKU per le tipologie richieste
-#     sku_tipologie = {art['sku'] for art in DATABASE_ARTICOLI if art['tipologia'] in tipologie}
-#
-#     return [op for op in operazioni if op['sku'] in sku_tipologie]
-#
-#
-# def filtroZona(operazioni: List[Dict[str, any]], zone: List[str]) -> List[Dict[str, any]]:
-#     """
-#     Filtra le operazioni per zona
-#
-#     Args:
-#         operazioni: lista delle operazioni da filtrare
-#         zone: lista di zone da includere
-#
-#     Returns:
-#         Lista filtrata delle operazioni
-#     """
-#     if not zone:
-#         return operazioni
-#
-#     # Nota: Assumendo che 'paese' sia la zona, altrimenti modificare
-#     zone_set = set(zone)
-#     return [op for op in operazioni if op['paese'] in zone_set]
+def filtroTipologia(lista_operazioni: List[Dict[str, any]], lista_articoli: List[Dict[str, any]], tipologie: List[str]) -> List[Dict[str, any]]:
+    """
+    Filtra le operazioni per genere (uomo/donna)
 
+    Args:
+        lista_operazioni: lista delle operazioni da filtrare
+        generi: lista di generi da includere ('uomo', 'donna')
 
-def filtraOperazioni(operazioni: List[Dict[str, any]],
+    Returns:
+        Lista filtrata delle operazioni
+        :param tipologie:
+        :param lista_operazioni:
+        :param lista_articoli:
+    """
+    if not tipologie:
+        return lista_operazioni
+
+    test = []
+
+    for art in lista_articoli:
+        if art['tipologia'] in tipologie:
+            test.append(art['sku'])
+
+    return [op for op in lista_operazioni if op['sku'] in test]
+
+def filtroZona(lista_operazioni: List[Dict[str, any]], zone: List[str]) -> list[dict[str, Any]]:
+    """
+    Calcola le vendite totali per ogni mese dell'anno
+
+    Args:
+        operazioni: lista delle operazioni dal database
+
+    Returns:
+        Una lista con 12 elementi (uno per mese) contenente i totali delle vendite
+        :param zone:
+        :param lista_operazioni:
+    """
+
+    if not zone:
+        return lista_operazioni
+
+    zone_set = set(zone)
+    return[op for op in lista_operazioni if op['paese'] in zone_set]
+
+def filtraOperazioni(lista_operazioni: List[Dict[str, any]],
+                     lista_articoli: List[Dict[str, Any]],
                      sku: List[str] = None,
                      generi: List[str] = None,
-                     # tipologie: List[str] = None,
-                     # zone: List[str] = None
+                     tipologie: List[str] = None,
+                     zone: List[str] = None
                      ) -> List[Dict[str, any]]:
     """
     Applica tutti i filtri specificati alle operazioni
 
     Args:
-        operazioni: lista delle operazioni da filtrare
+        lista_operazioni: lista delle operazioni da filtrare
         sku: lista di SKU da includere
         generi: lista di generi da includere
         tipologie: lista di tipologie da includere
@@ -215,26 +226,32 @@ def filtraOperazioni(operazioni: List[Dict[str, any]],
 
     Returns:
         Lista filtrata delle operazioni
+        :param zone:
+        :param tipologie:
+        :param generi:
+        :param sku:
+        :param lista_operazioni:
+        :param lista_articoli:
     """
-    filtrate = operazioni
+    filtrate = lista_operazioni
 
     if sku:
         filtrate = filtroSKU(filtrate, sku)
     if generi:
-        filtrate = filtroGenere(filtrate, articoli, generi)
-
-    # if tipologie:
-    #     filtrate = filtroTipologia(filtrate, tipologie)
-    # if zone:
-    #     filtrate = filtroZona(filtrate, zone)
+        filtrate = filtroGenere(filtrate, lista_articoli, generi)
+    if tipologie:
+        filtrate = filtroTipologia(filtrate, lista_articoli, tipologie)
+    if zone:
+        filtrate = filtroZona(filtrate, zone)
 
     return filtrate
 
-operazioni = letturaDatabaseOperazioni("../databaseOperazioni.txt")
-articoli = letturaDatabaseArticoli("../databaseArticoli.txt")
+
+# operazioni = letturaDatabaseOperazioni("../databaseOperazioni.txt")
+# articoli = letturaDatabaseArticoli("../databaseArticoli.txt")
 # vendite_mensili = calcolaVenditeTotali(operazioni)
-prova = filtraOperazioni(operazioni , [], ['uomo'])
-print(prova)
+# dati_filtrati = filtraOperazioni(operazioni , ['287ZO'], [], [], ['Francia'])
+# print(dati_filtrati)
 
 
 

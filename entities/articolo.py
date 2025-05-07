@@ -1,5 +1,3 @@
-from datetime import datetime
-from typing import Optional, List
 from .enums import TipologiaArticolo, GenereArticolo, UnitaMisura
 
 
