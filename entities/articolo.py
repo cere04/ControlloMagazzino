@@ -2,6 +2,7 @@ from .enums import TipologiaArticolo, GenereArticolo, UnitaMisura
 
 
 class Articolo:
+    # costruttore
     def __init__(self,
                  sku: str,
                  nome: str,

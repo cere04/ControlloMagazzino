@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from typing import List, Dict, Tuple, Any
+from typing import List, Dict, Any
 
 def letturaDatabaseOperazioni(nome_file: str) -> List[Dict[str, any]]:
     """
