@@ -8,7 +8,7 @@ class Articolo: #dovremmo aggiungere () anche se non c'è una superclasse
     def __init__(self,  #l'init è il costruttore e serve per istanziare la classe
                  sku: str,
                  nome: str,
-                 tipologia: TipologiaArticolo, #che tipo è TipologiaArticolo? (e quelli sotto)
+                 tipologia: TipologiaArticolo,
                  genere: GenereArticolo,
                  unita_misura: UnitaMisura,
                  ):
