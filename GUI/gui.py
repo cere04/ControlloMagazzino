@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
 from PyQt5.QtGui import QFontDatabase, QColor, QPainter
 from PyQt5.QtCore import Qt
 from PyQt5.QtChart import QChart, QChartView, QBarSeries, QBarSet, QPieSeries, QBarCategoryAxis, QValueAxis
-from services.operation_service import (filtraOperazioni, letturaDatabaseOperazioni, letturaDatabaseArticoli, calcolaVenditeTotali)
+from services.operation_service import (filtraOperazioni, calcolaVenditeTotali)
+from entities.operazione import (letturaDatabaseArticoli, letturaDatabaseOperazioni)
 
 # Caricamento dei dati
 file_operazioni = "db/databaseOperazioni.txt "
@@ -239,3 +240,6 @@ class MainWindow(QMainWindow):
                 color: #333333;
             }}
         """)
+
+    def ottieniLivelloAccesso(self):
+        pass

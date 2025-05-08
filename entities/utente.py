@@ -1,22 +1,76 @@
-from datetime import datetime
-from typing import Optional
 from .enums import RuoloUtente
+from abc import abstractmethod, ABC
 
-
-class Utente:
+#è giusto creare la classe astratta così?
+class Utente(ABC):
     def __init__(self,
-                 id: int,
                  nome: str,
                  cognome: str,
-                 codice_dipendente: str,
-                 ruolo: RuoloUtente,
+                 codiceDipendente: str,
+                 livelloAccesso: RuoloUtente
                  ):
-        self.id = id
         self.nome = nome
         self.cognome = cognome
-        self.codice_dipendente = codice_dipendente
-        self.ruolo = ruolo
+        self.codiceDipendente = codiceDipendente
+        self.livelloAccesso = livelloAccesso
 
-    def __repr__(self):
-        return f"Utente(id={self.id}, nome='{self.nome}', cognome='{self.cognome}', " \
-               f"codice='{self.codice_dipendente}', ruolo={self.ruolo})"
+    @abstractmethod
+    def metodoAstratto(self):
+        pass
+
+
+class Admin(Utente):
+    def __init__(self,
+                 nome : str,
+                 cognome : str,
+                 codiceDipendente : str
+    ):
+        super().__init__(nome, cognome, codiceDipendente, RuoloUtente.ADMIN)
+
+
+class ResponsabileCommerciale(Utente):
+    def __init__(self,
+                 nome:str,
+                 cognome:str,
+                 codiceDipendente:str
+                 ):
+        super().__init__(nome, cognome, codiceDipendente, RuoloUtente.RESPONSABILE_COMMERCIALE)
+
+
+# -------------------------------------------------------------------------------------------------
+# chiedere se serve inserire la generalizzazione anche sull'implementazione per questa sottoclasse
+# -------------------------------------------------------------------------------------------------
+
+
+# class Operatore(Utente):
+#     def __init__(self,
+#                  nome:str,
+#                  cognome:str,
+#                  codiceDipendente:str
+#                  ):
+#         super().__init__(nome, cognome, codiceDipendente, RuoloUtente.OPERATORE)
+
+class Commesso(Utente):
+    def __init__(self,
+                 nome:str,
+                 cognome:str,
+                 codiceDipendente:str
+                 ):
+        super().__init__(nome, cognome, codiceDipendente, RuoloUtente.COMMESSO)
+
+class Magazziniere(Utente):
+    def __init__(self,
+                 nome:str,
+                 cognome:str,
+                 codiceDipendente:str
+                 ):
+        super().__init__(nome, cognome, codiceDipendente, RuoloUtente.MAGAZZINIERE)
+
+
+
+
+
+
+
+
+
