@@ -1,7 +1,7 @@
 from .enums import RuoloUtente
 from abc import abstractmethod, ABC
 
-#è giusto creare la classe astratta così?
+
 class Utente(ABC):
     def __init__(self,
                  nome: str,
