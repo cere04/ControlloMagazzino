@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from typing import List, Dict, Any
+from collections import defaultdict
 
 
 def calcolaVenditeTotali(lista_operazioni: List[Dict[str, any]]) -> List[int]:
@@ -24,6 +25,70 @@ def calcolaVenditeTotali(lista_operazioni: List[Dict[str, any]]) -> List[int]:
             vendite_totali[mese] += vendita
 
     return vendite_totali
+
+def calcolaGiacenzaMedia(lista_operazioni: List[Dict[str, any]]) -> List[int]:
+    sorted_operazioni = sorted(lista_operazioni, key=lambda x: x['data'])
+
+    current_balance = 0
+    giacenzaMedia = [0] * 12
+
+    operazioni_per_mese = defaultdict(list)
+
+    for op in lista_operazioni:
+        mese = op['data'].month - 1  # Convert to 0-based index (0-11)
+        operazioni_per_mese[mese].append(op)
+
+    # Process each month in order from January (0) to December (11)
+    for mese in range(12):
+        initial_balance = current_balance
+        sum_vendite = 0
+
+        for op in operazioni_per_mese.get(mese, []):
+            if op['giacenza'] < 0:
+                sum_vendite += op['vendita']
+
+
+        print(initial_balance)
+        print(sum_vendite)
+
+        # Update the current balance (final balance for the month)
+        final_balance = initial_balance - sum_vendite
+
+        average = (initial_balance + final_balance) // 2  # Using integer division
+        giacenzaMedia[mese] = average
+
+        # Update the current balance for the next month's initial balance
+        current_balance = final_balance
+
+    return giacenzaMedia
+
+# --------------------------
+# prova calcoloGiacenzaMedia
+# --------------------------
+
+# def calcolaGiacenzaMedia(lista_operazioni: List[Dict[str, any]]) -> List[int]:
+#
+#     giacenzeTotali = [0] * 12
+#     giacenzeTotaliSucc = [0] * 13
+#     giacenzaMedia = [0] * 12
+#
+#
+#
+#     for op in lista_operazioni:
+#         if op['giacenza'] < 0:
+#             mese = op['data'].month - 1  # Converti in indice (0-11)
+#             mese_successivo = op['data'].month   # Converti in indice (0-11)
+#             giacenza = op['vendita']
+#             giacenzeTotali[mese] += giacenza
+#             giacenzeTotaliSucc[mese_successivo] += giacenza
+#             giacenzaMedia[mese] = (giacenzeTotali[mese] + giacenzeTotaliSucc[mese])/2
+#
+#
+#     # print(giacenzeTotali)
+#     # print(giacenzeTotaliSucc)
+#     # print(giacenzaMedia)
+#     return giacenzaMedia
+
 
 def filtroSKU(lista_operazioni: List[Dict[str, any]], sku_list: List[str]) -> list[dict[str, Any]]:
     """

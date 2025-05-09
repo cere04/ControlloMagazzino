@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-                             QPushButton, QLabel, QFrame)
+                             QPushButton, QLabel, QFrame, QComboBox)
 from PyQt5.QtGui import QFontDatabase, QColor, QPainter
 from PyQt5.QtCore import Qt
 from PyQt5.QtChart import QChart, QChartView, QBarSeries, QBarSet, QPieSeries, QBarCategoryAxis, QValueAxis
-from services.operation_service import (filtraOperazioni, calcolaVenditeTotali)
+from services.operation_service import (filtraOperazioni, calcolaVenditeTotali, calcolaGiacenzaMedia)
 from entities.operazione import (letturaDatabaseArticoli, letturaDatabaseOperazioni)
+from entities.enums import GenereArticolo, TipologiaArticolo
 
 # Caricamento dei dati
 file_operazioni = "db/databaseOperazioni.txt "
@@ -19,7 +20,7 @@ class MainWindow(QMainWindow):
 
         # Configurazione finestra principale
         self.setWindowTitle("Gestione Magazzino")
-        self.setGeometry(100, 100, 1200, 800)
+        self.setGeometry(100, 100, 1500, 900)
 
         # Creazione widget centrale e layout principale
         central_widget = QWidget()
@@ -81,24 +82,58 @@ class MainWindow(QMainWindow):
         left_sub_block.setObjectName("block1")
         left_sub_block_layout = QVBoxLayout(left_sub_block)
 
+        # Container per i combo box allineati a destra
+        combo_container = QWidget()
+        combo_layout = QHBoxLayout(combo_container)
+        combo_layout.setContentsMargins(0, 0, 0, 0)
+        combo_layout.setSpacing(10)
+
+        # Aggiungi stretch a sinistra per allineare i combo a destra
+        combo_layout.addStretch()
+
+        self.filterComboGenere = QComboBox()
+        self.filterComboTipologia = QComboBox()
+
+        self.filterComboGenere.setFixedSize(180, 40)
+        self.filterComboTipologia.setFixedSize(180, 40)
+        self.filterComboGenere.setObjectName("filterGenere")
+        self.filterComboTipologia.setObjectName("filterTipologia")
+
+
+        for genere in GenereArticolo:
+            self.filterComboGenere.addItem(genere.name.capitalize(), genere.value)
+
+        for tipologia in TipologiaArticolo:
+            self.filterComboTipologia.addItem(tipologia.name.capitalize(), tipologia.value)
+
+        self.filterComboGenere.setCurrentIndex(0)
+        self.filterComboTipologia.setCurrentIndex(0)
+
+        combo_layout.addWidget(self.filterComboGenere)
+        combo_layout.addWidget(self.filterComboTipologia)
+
+        # Aggiungi il container dei combo al layout principale del blocco sinistro
+        left_sub_block_layout.addWidget(combo_container, alignment=Qt.AlignRight)
+
         # Creazione grafico a colonne
         chart_col = self.create_bar_chart()
         chart_view_col = QChartView(chart_col)
         chart_view_col.setRenderHint(QPainter.Antialiasing)
-        left_sub_block_layout.addWidget(QPushButton('provaFiltro'))
         left_sub_block_layout.addWidget(chart_view_col)
 
-        # Sotto-blocco destro (rapporto 1:3) - Grafico a torta
+        # Sotto-blocco destro (rapporto 1:3)
         right_sub_block = QFrame()
         right_sub_block.setFrameShape(QFrame.StyledPanel)
         right_sub_block.setObjectName("block2")
         right_sub_block_layout = QVBoxLayout(right_sub_block)
+        right_sub_block_layout.addWidget(QLabel("Blocco 2"))
+
 
         # Creazione grafico a torta
-        chart_pie = self.create_pie_chart()
-        chart_view_pie = QChartView(chart_pie)
-        chart_view_pie.setRenderHint(QPainter.Antialiasing)
-        right_sub_block_layout.addWidget(chart_view_pie)
+        # chart_pie = self.create_pie_chart()
+        # chart_view_pie = QChartView(chart_pie)
+        # chart_view_pie.setRenderHint(QPainter.Antialiasing)
+        # right_sub_block_layout.addWidget(chart_view_pie)
 
         top_layout.addWidget(left_sub_block, stretch=6)
         top_layout.addWidget(right_sub_block, stretch=4)
@@ -115,26 +150,33 @@ class MainWindow(QMainWindow):
 
     def create_bar_chart(self):
 
-        vendite_mensili = calcolaVenditeTotali(operazioni)
+        venditeMensili = calcolaVenditeTotali(operazioni)
+        giacenzaMedia= calcolaGiacenzaMedia(operazioni)
 
         mesi = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu',
                   'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
 
-        # Creazione serie di dati
-        series = QBarSeries()
-        bar_set = QBarSet("Vendite")
-        bar_set.setColor(QColor("#4a6fa5"))  # Colore coerente con il tema
-
-        for vendite in vendite_mensili:
-            bar_set.append(vendite)
-
-        series.append(bar_set)
-
         # Creazione grafico
         chart = QChart()
-        chart.addSeries(series)
-        chart.setTitle("Vendite mensili")
         chart.setAnimationOptions(QChart.SeriesAnimations)
+
+        # Crea due bar set (colonne) diversi
+        bar_set1 = QBarSet("Vendite")  # Prima colonna (originale)
+        bar_set2 = QBarSet("Altri Dati")  # Seconda colonna (nuova)
+
+        # Aggiungi i dati ai bar set
+        bar_set1.append(venditeMensili)
+        bar_set2.append(giacenzaMedia)  # Sostituisci con la tua funzione per i dati aggiuntivi
+
+        # Personalizza i colori
+        bar_set1.setBrush(QColor("#3498db"))  # Blu originale
+        bar_set2.setBrush(QColor("#f1c40f"))  # Giallo nuova colonna
+
+        # Crea la serie di barre e aggiungi entrambi i set
+        series = QBarSeries()
+        series.append(bar_set1)
+        series.append(bar_set2)
+        chart.addSeries(series)
 
         # Asse X
         axis_x = QBarCategoryAxis()
@@ -143,13 +185,14 @@ class MainWindow(QMainWindow):
         series.attachAxis(axis_x)
 
         # Asse Y
+        max_val = max(venditeMensili)
         axis_y = QValueAxis()
-        axis_y.setRange(0, max(vendite_mensili) + 5)
+        axis_y.setRange(0, max_val + 5)
         chart.addAxis(axis_y, Qt.AlignLeft)
         series.attachAxis(axis_y)
 
         # Stile del grafico
-        chart.setBackgroundBrush(QColor("#ffffff"))
+        chart.setBackgroundBrush(QColor("transparent"))
         chart.setTitleBrush(QColor("#2c3e50"))
         chart.legend().setVisible(True)
         chart.legend().setAlignment(Qt.AlignBottom)
@@ -221,6 +264,68 @@ class MainWindow(QMainWindow):
             QPushButton#authButton:pressed {{
                 background-color: #2a4a7f;
             }}
+            
+            /* Stile per QComboBox */
+            QComboBox {{
+                background-color: #ffffff;
+                border: 1px solid #C8CBD9;
+                border-radius: 4px;
+                padding: 4px 0px 4px 8px;
+                font-size: 14px;
+                color: #212529;
+                min-height: 30px;
+            }}
+            
+            QComboBox:hover {{
+                border-color: #a0a4b0;
+            }}
+    
+            QComboBox:on {{  /* Quando il menu è aperto */
+                border-color: #4a6fa5;
+            }}
+    
+            QComboBox::drop-down {{
+                subcontrol-origin: padding;
+                subcontrol-position: right center;
+                width: 24px;
+                border-left: 1px solid #C8CBD9;
+            }}
+    
+            QComboBox::down-arrow {{
+                image: url(images/arrow-down.svg);
+                width: 12px;
+                height: 12px;
+            }}
+    
+            QComboBox QAbstractItemView {{
+                border: 1px solid #C8CBD9;
+                background: #ffffff;
+                selection-background-color: #4a6fa5;
+                selection-color: #ffffff;
+                outline: 0;
+                padding: 4px 0;
+            }}
+    
+            QComboBox QAbstractItemView::item {{
+                min-height: 30px;
+                padding: 4px 12px;
+            }}
+    
+            QComboBox QAbstractItemView::item:hover {{
+                background-color: #e9f2fa;
+            }}
+    
+            /* Stile per stato disabilitato */
+            QComboBox:disabled {{
+                background-color: #f1f3f5;
+                color: #868e96;
+                border-color: #dee2e6;
+            }}
+
+
+
+
+
 
             QFrame {{
                 border: none;

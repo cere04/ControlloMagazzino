@@ -15,7 +15,9 @@ def run_app():
 
     # Creazione e visualizzazione finestra principale
     window = MainWindow()
+    # window.showMaximized()
     window.show()
+
 
     sys.exit(app.exec_())
 
