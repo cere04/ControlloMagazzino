@@ -3,7 +3,7 @@ from enum import Enum
 class TipologiaArticolo(Enum):
     CALZATURE = "Calzature"
     BORSE = "Borse"
-    ABBIGLIAMENTO = "Capi d'abbigliamento"
+    ABBIGLIAMENTO = "abbigliamento"
 
 class GenereArticolo(Enum):
     UOMO = "Uomo"
@@ -19,6 +19,7 @@ class RuoloUtente(Enum):
     MAGAZZINIERE = "Magazziniere"
     ADMIN = "Amministratore"
     RESPONSABILE_COMMERCIALE = "Responsabile Commerciale"
+    OPERATORE= "Operatore"
 
 class TipoOperazione(Enum):
     VENDITA = "Vendita"
