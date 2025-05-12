@@ -103,3 +103,5 @@ class subClass(absClass):
 #     tipologie=tipologia_vals,
 #     zone=zone_vals
 # )
+
+#ciao
