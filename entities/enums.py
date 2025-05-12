@@ -24,3 +24,9 @@ class RuoloUtente(Enum):
 class TipoOperazione(Enum):
     VENDITA = "Vendita"
     GIACENZA = "Giacenza"
+
+class Zone(Enum):
+    ITALIA = "Italia"
+    SPAGNA = "Spagna"
+    GERMANIA = "Germania"
+    FRANCIA = "Francia"

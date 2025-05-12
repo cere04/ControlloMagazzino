@@ -1,6 +1,4 @@
 import sys
-from abc import ABCMeta, abstractmethod
-
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QFont
 from GUI.gui import MainWindow
@@ -18,24 +16,10 @@ def run_app():
     # window.showMaximized()
     window.show()
 
-
     sys.exit(app.exec_())
-
 
 if __name__ == "__main__":
     run_app()
-
-class absClass(object):
-    __metaclass__ = ABCMeta
-
-    @abstractmethod
-    def virtual_method(self):
-        pass
-
-class subClass(absClass):
-    def virtual_method(self):
-        a=1
-        print(a)
 
 
 

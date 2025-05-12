@@ -48,8 +48,8 @@ def calcolaGiacenzaMedia(lista_operazioni: List[Dict[str, any]]) -> List[int]:
                 sum_vendite += op['vendita']
 
 
-        print(initial_balance)
-        print(sum_vendite)
+        # print(initial_balance)
+        # print(sum_vendite)
 
         # Update the current balance (final balance for the month)
         final_balance = initial_balance - sum_vendite
@@ -262,21 +262,3 @@ def filtraOperazioni(lista_operazioni: List[Dict[str, any]],
 #     for i, totale in enumerate(vendite_mensili):
 #         print(f"{mesi[i]}: {totale}")
 #     print("======================")
-
-
-# test funzioni
-# 1. Leggi il database
-
-# if not operazioni:
-#     print("Nessuna operazione trovata nel database")
-# else:
-#     print(f"Lettura completata. Trovate {len(operazioni)} operazioni")
-#
-#     # 2. Calcola le vendite per ogni mese
-
-    # 3. Visualizza i risultati
-    # visualizzaVenditeMensili(vendite_mensili)
-
-
-# operazioni = letturaDatabase("../databaseOperazioni.txt")
-# calcolaVenditeMensili(operazioni, 3)

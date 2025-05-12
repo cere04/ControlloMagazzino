@@ -13,11 +13,11 @@ class Articolo:
         self.genere = genere
 
     def aggiungiArticolo(self):
-        with open("db\databaseArticoli.txt", "a", encoding="utf-8") as file:
-            file.write(f"{self.sku}, {self.genere}, {self.tipologia}\n")
+        with open("../db/databaseArticoli.txt", "a") as file:
+            file.write(f"\n{self.sku}, {self.genere}, {self.tipologia}")
 
-articolo = Articolo("999ZZ", "Calzatura", "Donna")
-articolo.aggiungiArticolo()
+# articolo = Articolo("999ZZ", "Calzatura", "Donna")
+# articolo.aggiungiArticolo()
 
 
 #Articolo1 = Articolo('stringa' , )

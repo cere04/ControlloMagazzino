@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
-from .enums import TipoOperazione
-from .articolo import Articolo
+from entities.enums import TipoOperazione
+from entities.articolo import Articolo
 from typing import List, Dict, Any
 
 
@@ -102,33 +102,113 @@ def letturaDatabaseOperazioni(nome_file: str) -> List[Dict[str, any]]:
 
 class Operazione:
     def __init__(self,
-                 id: int,
-                 tipo: TipoOperazione,
-                 articolo: Articolo,
-                 quantitaVendita: float,
-                 quantitaGiacenza: float,
-                 data: datetime
+                 id= None,
+                 tipo= None,
+                 sku= None,
+                 quantitaVendita = 0,
+                 quantitaGiacenza = 0,
+                 paese= None,
+                 data = datetime.now(),
     ):
+
+        try:
+            self.quantitaVendita = int(quantitaVendita)
+        except (ValueError, TypeError):
+            self.quantitaVendita = 0
+
+        try:
+            self.quantitaGiacenza = int(quantitaGiacenza)
+        except (ValueError, TypeError):
+            self.quantitaGiacenza = 0
 
         self.id = id
         self.tipo = tipo
-        self.articolo = articolo
+        self.sku = sku
         self.quantitaVendita = quantitaVendita
         self.quantitaGiacenza = quantitaGiacenza
         self.data = data
+        self.paese = paese
 
     def aggiungiVendita(self):
-        pass
+        """Aggiunge una vendita al database con controlli."""
+        lista_operazioni = letturaDatabaseOperazioni("../db/databaseOperazioni.txt")
+        id_auto = max(op['idOperazione'] for op in lista_operazioni) + 1 if lista_operazioni else 1
+        self.data_formatted = self.data.strftime("%d-%m-%Y")
+        with open("../db/databaseOperazioni.txt", 'a') as file:
+            file.write(f"\n{self.sku}, {self.quantitaVendita}, {-self.quantitaVendita}, {self.paese}, {self.data_formatted}, {id_auto}" )
 
     def aggiungiGiacenza(self):
-        pass
+        lista_operazioni = letturaDatabaseOperazioni("../db/databaseOperazioni.txt")
+        id_auto = max(op['idOperazione'] for op in lista_operazioni) + 1 if lista_operazioni else 1
+        self.data_formatted = self.data.strftime("%d-%m-%Y")
+        with open("../db/databaseOperazioni.txt", 'a') as file:
+            file.write(f"\n{self.sku}, {0}, {self.quantitaGiacenza}, {self.paese}, {self.data_formatted}, {id_auto}" )
 
-    def modificaVendita(self):
-        pass
+    def modificaVendita(self, id_set, sku, quantitaVendita, quantitaGiacenza, data):
+        lista_operazioni = letturaDatabaseOperazioni("../db/databaseOperazioni.txt")
+        operazione_trovata = False
+
+        for op in lista_operazioni:
+            if op['idOperazione'] == id_set:
+                operazione_trovata = True
+
+                # Aggiorna solo i campi forniti
+                if self.sku not in (None, ""):
+                    op['sku'] = self.sku
+                if self.quantitaVendita != 0:
+                    op['quantitaVendita'] = self.quantitaVendita
+                    op['quantitaGiacenza'] = -self.quantitaVendita  # Aggiornamento automatico
+
+                if self.paese not in (None, ""):
+                    op['paese'] = self.paese
+
+                if self.data:
+                    op['data'] = self.data.strftime("%d-%m-%Y")
+
+                break
+            # if not operazione_trovata:
+            #     raise ValueError(f"ID operazione {id_set} non trovato")
+
+            lines = []
+            for op1 in lista_operazioni:
+                line = (
+                    f"{op1['sku']},"
+                    f"{op1['quantitaVendita']},"
+                    f"{op1['quantitaGiacenza']},"
+                    f"{op1['paese']},"
+                    f"{op1['data']},"
+                    f"{op1['idOperazione']}"
+                )
+                lines.append(line)
+
+            try:
+                with open("../db/databaseOperazioni.txt", 'w') as file:
+                    file.write("\n".join(lines))
+            except Exception as e:
+                raise RuntimeError(f"Errore salvataggio database: {str(e)}")
 
     def modificaGiacenza(self):
         pass
 
-    def aggiornaDb(self):
-        """Aggiorna la quantità disponibile di un articolo"""
-        pass
+    # def aggiornaDb(self):
+    #     """Scrive l'operazione nel file database."""
+    #     nome_file = "db/databaseOperazioni.txt"
+    #     data_str = self.data.strftime('%d-%m-%Y')
+    #     sku = self.articolo.sku  # Assumendo che Articolo abbia attributo sku
+    #     linea = (
+    #         f"{sku}, {self.quantitaVendita}, {self.quantitaGiacenza}, "
+    #         f"{self.paese}, {data_str}, {self.id}\n"
+    #     )
+    #     try:
+    #         with open(nome_file, 'a') as file:
+    #             file.write(linea)
+    #     except Exception as e:
+    #         print(f"Errore durante il salvataggio: {e}")
+    #         raise
+
+
+# test metodi
+# operazione = Operazione(sku="922WE", quantitaGiacenza=15, paese="Italia")
+operazione = Operazione(sku="922WE", quantitaVendita=15, paese="Italia")
+# operazione.modificaVendita(90, "922WA", 51, 0, None)
+operazione.aggiungiVendita()
