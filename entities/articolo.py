@@ -1,4 +1,4 @@
-from .enums import TipologiaArticolo, GenereArticolo, UnitaMisura
+from enums import TipologiaArticolo, GenereArticolo, UnitaMisura
 
 
 class Articolo:
@@ -13,14 +13,20 @@ class Articolo:
         self.genere = genere
 
     def aggiungiArticolo(self):
-        pass
+        with open("db\databaseArticoli.txt", "a", encoding="utf-8") as file:
+            file.write(f"{self.sku}, {self.genere}, {self.tipologia}\n")
 
-    def modificaArticolo(self):
-        pass
+articolo = Articolo("999ZZ", "Calzatura", "Donna")
+articolo.aggiungiArticolo()
 
-    def eliminaArticolo(self):
-        pass
 
-    def get_articolo_by_sku(self):
-        """Recupera un articolo tramite SKU"""
-        pass
+#Articolo1 = Articolo('stringa' , )
+    #def modificaArticolo(self):
+       # pass
+
+    #def eliminaArticolo(self):
+       # pass
+
+   # def get_articolo_by_sku(self):
+       # """Recupera un articolo tramite SKU"""
+       # pass
