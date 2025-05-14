@@ -144,42 +144,54 @@ class Operazione:
         with open("../db/databaseOperazioni.txt", 'a') as file:
             file.write(f"\n{self.sku}, {0}, {self.quantitaGiacenza}, {self.paese}, {self.data_formatted}, {id_auto}" )
 
-    def modificaVendita(self, id_set, sku, quantitaVendita, quantitaGiacenza, data):
+    def modificaVendita(self, id_set, sku_set, quantitaVendita, quantitaGiacenza, paese, data):
+        print(id_set)
+        print(sku_set)
+        print(quantitaVendita)
+        print(paese)
+        print(data)
+
         lista_operazioni = letturaDatabaseOperazioni("../db/databaseOperazioni.txt")
-        operazione_trovata = False
 
         for op in lista_operazioni:
+            print("dentro")
             if op['idOperazione'] == id_set:
-                operazione_trovata = True
 
-                # Aggiorna solo i campi forniti
+                print("dentro1")
+
                 if self.sku not in (None, ""):
-                    op['sku'] = self.sku
+                    op['sku'] = sku_set
                 if self.quantitaVendita != 0:
-                    op['quantitaVendita'] = self.quantitaVendita
-                    op['quantitaGiacenza'] = -self.quantitaVendita  # Aggiornamento automatico
+                    op['vendita'] = quantitaVendita
+                    op['giacenza'] = -quantitaVendita  # Aggiornamento automatico
 
                 if self.paese not in (None, ""):
-                    op['paese'] = self.paese
+                    op['paese'] = paese
 
-                if self.data:
-                    op['data'] = self.data.strftime("%d-%m-%Y")
+                if self.data is None:
+                    op['data'] = data.strftime('%d-%m-%Y')
 
-                break
+                print("fatto tutto")
+
+                # break
             # if not operazione_trovata:
             #     raise ValueError(f"ID operazione {id_set} non trovato")
 
+            print("fuori2")
             lines = []
             for op1 in lista_operazioni:
+                print("dentro2")
                 line = (
-                    f"{op1['sku']},"
-                    f"{op1['quantitaVendita']},"
-                    f"{op1['quantitaGiacenza']},"
-                    f"{op1['paese']},"
-                    f"{op1['data']},"
+                    f"{op1['sku']}, "
+                    f"{op1['vendita']}, "
+                    f"{op1['giacenza']}, "
+                    f"{op1['paese']}, "
+                    f"{op1['data']}, "
                     f"{op1['idOperazione']}"
                 )
                 lines.append(line)
+
+            print(op1['data'])
 
             try:
                 with open("../db/databaseOperazioni.txt", 'w') as file:
@@ -209,6 +221,6 @@ class Operazione:
 
 # test metodi
 # operazione = Operazione(sku="922WE", quantitaGiacenza=15, paese="Italia")
-operazione = Operazione(sku="922WE", quantitaVendita=15, paese="Italia")
-# operazione.modificaVendita(90, "922WA", 51, 0, None)
-operazione.aggiungiVendita()
+operazione = Operazione()
+operazione.modificaVendita(1, "922WE", 51, 0, None, None)
+# operazione.aggiungiVendita()
