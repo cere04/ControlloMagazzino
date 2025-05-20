@@ -1,32 +1,83 @@
+from entities.operazione import letturaDatabaseArticoli
 from enums import TipologiaArticolo, GenereArticolo, UnitaMisura
 
 
 class Articolo:
-    # costruttore
     def __init__(self,
-                 sku: str,
-                 tipologia: TipologiaArticolo,
-                 genere: GenereArticolo
+                 sku = None,
+                 tipologia = TipologiaArticolo,
+                 genere = GenereArticolo
                  ):
         self.sku = sku
         self.tipologia = tipologia
         self.genere = genere
 
     def aggiungiArticolo(self):
-        with open("../db/databaseArticoli.txt", "a") as file:
+        '''metodo per l'aggiunta di un nuovo articolo nel database articoli'''
+        with open("../Model/databaseArticoli.txt", "a") as file:
             file.write(f"\n{self.sku}, {self.genere}, {self.tipologia}")
 
-# articolo = Articolo("999ZZ", "Calzatura", "Donna")
+    def modificaArticolo(self, sku_set, genere, tipologia):
+        '''metodo per la modifica di un articolo presente all'interno del database articoli'''
+        lista_articoli = letturaDatabaseArticoli("../Model/databaseArticoli.txt")
+        articolo_trovato = False
+
+        for art in lista_articoli:
+            if art['sku'] == sku_set:
+
+                articolo_trovato = True
+
+                if genere is not None:
+                    art['genere'] = genere
+
+                if tipologia is not None:
+                    art['tipologia'] = tipologia
+
+            lines=[]
+            for art1 in lista_articoli:
+                line = (
+                    f"{art1['sku']}, "
+                    f"{art1['genere']}, "
+                    f"{art1['tipologia']}"
+                )
+                lines.append(line)
+
+            try:
+                with open("../Model/databaseArticoli.txt", 'w') as file:
+                    file.write("\n".join(lines))
+            except Exception as e:
+                raise RuntimeError(f"Errore salvataggio database: {str(e)}")
+
+        if not articolo_trovato:
+            raise ValueError(f"SKU articolo {sku_set} non trovato")
+
+    def eliminaArticolo(self, sku_set):
+        lista_articoli=letturaDatabaseArticoli("../Model/databaseArticoli.txt")
+
+        for art in lista_articoli:
+            if art['sku'] == sku_set:
+                lista_articoli_new = [riga for riga in lista_articoli if sku_set not in riga['sku']]
+
+            lines=[]
+            for art1 in lista_articoli_new:
+                line=(
+                    f"{art1['sku']}, "
+                    f"{art1['genere']}, "
+                    f"{art1['tipologia']}"
+                )
+                lines.append(line)
+
+            try:
+                with open("../Model/databaseArticoli.txt", 'w') as file:
+                    file.write("\n".join(lines))
+            except Exception as e:
+                raise RuntimeError(f"Errore salvataggio database: {str(e)}")
+
+
+
+#test metodi
+articolo = Articolo()
 # articolo.aggiungiArticolo()
+# articolo.modificaArticolo("687YP", "donna", "borsa")
+articolo.eliminaArticolo("301FN")
 
-
-#Articolo1 = Articolo('stringa' , )
-    #def modificaArticolo(self):
-       # pass
-
-    #def eliminaArticolo(self):
-       # pass
-
-   # def get_articolo_by_sku(self):
-       # """Recupera un articolo tramite SKU"""
-       # pass

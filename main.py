@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QFont
-from GUI.gui import MainWindow
+from View.gui import MainWindow
 
 def run_app():
     app = QApplication(sys.argv)

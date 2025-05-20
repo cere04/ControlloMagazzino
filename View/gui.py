@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
 from PyQt5.QtGui import QFontDatabase, QColor, QPainter
 from PyQt5.QtCore import Qt
 from PyQt5.QtChart import QChart, QChartView, QBarSeries, QBarSet, QPieSeries, QBarCategoryAxis, QValueAxis
-from services.operation_service import (filtraOperazioni, calcolaVenditeTotali, calcolaGiacenzaMedia)
+from Controllers.operation_service import (filtraOperazioni, calcolaVenditeTotali, calcolaGiacenzaMedia)
 from entities.operazione import (letturaDatabaseArticoli, letturaDatabaseOperazioni, Operazione)
 from entities.articolo import Articolo
 from entities.enums import GenereArticolo, TipologiaArticolo, TipoOperazione, Zone
@@ -14,8 +14,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.fileOperazioni = "db/databaseOperazioni.txt "
-        self.fileArticoli = "db/databaseArticoli.txt "
+        self.fileOperazioni = "Model/databaseOperazioni.txt "
+        self.fileArticoli = "Model/databaseArticoli.txt "
         self.operazioni = letturaDatabaseOperazioni(self.fileOperazioni)
         self.articoli = letturaDatabaseArticoli(self.fileArticoli)
 
@@ -266,8 +266,8 @@ class MainWindow(QMainWindow):
 
     def create_bar_chart(self):
 
-        operazioni=letturaDatabaseOperazioni("db/databaseOperazioni.txt")
-        articoli=letturaDatabaseArticoli("db/databaseArticoli.txt")
+        operazioni=letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
+        articoli=letturaDatabaseArticoli("Model/databaseArticoli.txt")
 
         sku = self.filterComboSku.text().strip() or None
         genere = self.filterComboGenere.currentData()

@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from typing import List, Dict, Any
-from collections import defaultdict
+from entities.operazione import letturaDatabaseOperazioni, letturaDatabaseArticoli
 
 
 def calcolaVenditeTotali(lista_operazioni: List[Dict[str, any]]) -> List[int]:
@@ -26,69 +26,69 @@ def calcolaVenditeTotali(lista_operazioni: List[Dict[str, any]]) -> List[int]:
 
     return vendite_totali
 
-def calcolaGiacenzaMedia(lista_operazioni: List[Dict[str, any]]) -> List[int]:
-    sorted_operazioni = sorted(lista_operazioni, key=lambda x: x['data'])
+def ordinamentoOperazioni(lista_operazioni: List[Dict[str, any]], mese_set):
 
-    current_balance = 0
-    giacenzaMedia = [0] * 12
+    if mese_set == 2:
+        giorni_mese = 28
+    elif mese_set in {1, 3, 5, 7, 8, 10, 12}:
+        giorni_mese = 31
+    else:
+        giorni_mese = 30
 
-    operazioni_per_mese = defaultdict(list)
+    operazioni_ordinate = [0] * giorni_mese
 
     for op in lista_operazioni:
-        mese = op['data'].month - 1  # Convert to 0-based index (0-11)
-        operazioni_per_mese[mese].append(op)
+        data_op = op['data']
 
-    # Process each month in order from January (0) to December (11)
-    for mese in range(12):
-        initial_balance = current_balance
-        sum_vendite = 0
+        # Estrae mese e giorno dalla data
+        mese_op = int(data_op.strftime("%m"))
+        giorno_op = int(data_op.strftime("%d"))
 
-        for op in operazioni_per_mese.get(mese, []):
-            if op['giacenza'] < 0:
-                sum_vendite += op['vendita']
+        # Controlla se l'operazione appartiene al mese specificato
+        if mese_op != mese_set:
+            continue
 
+        # Verifica che il giorno sia valido per il mese
+        if giorno_op < 1 or giorno_op > giorni_mese:
+            continue
 
-        # print(initial_balance)
-        # print(sum_vendite)
+        # Aggiunge la giacenza al giorno corrispondente
+        operazioni_ordinate[giorno_op - 1] += op['giacenza']
 
-        # Update the current balance (final balance for the month)
-        final_balance = initial_balance - sum_vendite
+    return operazioni_ordinate
 
-        average = (initial_balance + final_balance) // 2  # Using integer division
-        giacenzaMedia[mese] = average
+def giacenzaMediaMensile(operazioni_ordinate, mese_set) -> List[int]:
+    '''metodo per il calcolo della giacenza media'''
 
-        # Update the current balance for the next month's initial balance
-        current_balance = final_balance
+    totale=0
+    somma_corrente=0
+    ultimo_valore = 0
 
-    return giacenzaMedia
+    if mese_set == 2:
+        giorni_mese = 28
+    elif mese_set in {1, 3, 5, 7, 8, 10, 12}:
+        giorni_mese = 31
+    else:
+        giorni_mese = 30
 
-# --------------------------
-# prova calcoloGiacenzaMedia
-# --------------------------
+    for i in range(giorni_mese):
+        elemento_corrente = operazioni_ordinate[i]
+        if elemento_corrente != 0:
+            ultimo_valore = elemento_corrente
+            somma_corrente+=ultimo_valore
+        totale+=somma_corrente
 
-# def calcolaGiacenzaMedia(lista_operazioni: List[Dict[str, any]]) -> List[int]:
-#
-#     giacenzeTotali = [0] * 12
-#     giacenzeTotaliSucc = [0] * 13
-#     giacenzaMedia = [0] * 12
-#
-#
-#
-#     for op in lista_operazioni:
-#         if op['giacenza'] < 0:
-#             mese = op['data'].month - 1  # Converti in indice (0-11)
-#             mese_successivo = op['data'].month   # Converti in indice (0-11)
-#             giacenza = op['vendita']
-#             giacenzeTotali[mese] += giacenza
-#             giacenzeTotaliSucc[mese_successivo] += giacenza
-#             giacenzaMedia[mese] = (giacenzeTotali[mese] + giacenzeTotaliSucc[mese])/2
-#
-#
-#     # print(giacenzeTotali)
-#     # print(giacenzeTotaliSucc)
-#     # print(giacenzaMedia)
-#     return giacenzaMedia
+        media=totale/giorni_mese
+        media_round=round(media,2)
+    return media_round
 
+def indiceRotazione(vendite_totali, media_round):
+    indice_rotazione_round=[0]*12
+
+    for i in range(12):
+        indice_rotazione=vendite_totali[i]/media_round[i]
+        indice_rotazione_round[i]=round(indice_rotazione, 2)
+    return indice_rotazione_round
 
 def filtroSKU(lista_operazioni: List[Dict[str, any]], sku_list: List[str]) -> list[dict[str, Any]]:
     """
@@ -108,7 +108,6 @@ def filtroSKU(lista_operazioni: List[Dict[str, any]], sku_list: List[str]) -> li
 
     sku_set = set(sku_list)
     return[op for op in lista_operazioni if op['sku'] in sku_set]
-
 
 def filtroGenere(lista_operazioni: List[Dict[str, any]], lista_articoli: List[Dict[str, any]], generi: List[str]) -> List[Dict[str, any]]:
     """
@@ -219,11 +218,34 @@ def filtraOperazioni(lista_operazioni: List[Dict[str, any]],
     return filtrate
 
 
-# operazioni = letturaDatabaseOperazioni("../databaseOperazioni.txt")
-# articoli = letturaDatabaseArticoli("../databaseArticoli.txt")
+#test metodi
+
+lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+lista_articoli = letturaDatabaseArticoli("../Model/databaseArticoli.txt")
+
+dati_filtrati = filtraOperazioni(lista_operazioni ,lista_articoli , [], [], [])
+
+giacenza_media = [0] * 12
+
+vendite_totali = calcolaVenditeTotali(lista_operazioni)
+
+for i in range(12):
+    operazioni_ordinate=ordinamentoOperazioni(dati_filtrati, i+1)
+    giacenza_media[i]=giacenzaMediaMensile(operazioni_ordinate, i+1)
+
+indice_rotazione=indiceRotazione(vendite_totali, giacenza_media)
+print("vendite totali:", vendite_totali)
+print("giacenza media:",giacenza_media)
+print("indice rotazione:", indice_rotazione)
+
+
+
+
+
+
+
 # vendite_mensili = calcolaVenditeTotali(operazioni)
-# dati_filtrati = filtraOperazioni(operazioni , ['287ZO'], [], [], ['Francia'])
-# print(dati_filtrati)
+
 
 
 

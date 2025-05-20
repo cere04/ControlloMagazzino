@@ -1,7 +1,5 @@
 import os
 from datetime import datetime
-from entities.enums import TipoOperazione
-from entities.articolo import Articolo
 from typing import List, Dict, Any
 
 
@@ -129,98 +127,157 @@ class Operazione:
         self.data = data
         self.paese = paese
 
-    def aggiungiVendita(self):
-        """Aggiunge una vendita al database con controlli."""
-        lista_operazioni = letturaDatabaseOperazioni("../db/databaseOperazioni.txt")
-        id_auto = max(op['idOperazione'] for op in lista_operazioni) + 1 if lista_operazioni else 1
-        self.data_formatted = self.data.strftime("%d-%m-%Y")
-        with open("../db/databaseOperazioni.txt", 'a') as file:
-            file.write(f"\n{self.sku}, {self.quantitaVendita}, {-self.quantitaVendita}, {self.paese}, {self.data_formatted}, {id_auto}" )
+    def separaOperazioni(self):
+        '''metodo per dividere le operazioni in giacenze e vendite '''
 
-    def aggiungiGiacenza(self):
-        lista_operazioni = letturaDatabaseOperazioni("../db/databaseOperazioni.txt")
-        id_auto = max(op['idOperazione'] for op in lista_operazioni) + 1 if lista_operazioni else 1
-        self.data_formatted = self.data.strftime("%d-%m-%Y")
-        with open("../db/databaseOperazioni.txt", 'a') as file:
-            file.write(f"\n{self.sku}, {0}, {self.quantitaGiacenza}, {self.paese}, {self.data_formatted}, {id_auto}" )
-
-    def modificaVendita(self, id_set, sku_set, quantitaVendita, quantitaGiacenza, paese, data):
-        print(id_set)
-        print(sku_set)
-        print(quantitaVendita)
-        print(paese)
-        print(data)
-
-        lista_operazioni = letturaDatabaseOperazioni("../db/databaseOperazioni.txt")
+        lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+        lista_vendite=[]
+        lista_giacenze=[]
+        controllo=None
 
         for op in lista_operazioni:
-            print("dentro")
-            if op['idOperazione'] == id_set:
+            if op['vendita'] == 0:
+                lista_vendite.append(op['idOperazione'])
+                controllo=False
+            else:
+                lista_giacenze.append(op['idOperazione'])
+                controllo=True
 
-                print("dentro1")
+        return controllo
 
-                if self.sku not in (None, ""):
-                    op['sku'] = sku_set
-                if self.quantitaVendita != 0:
-                    op['vendita'] = quantitaVendita
-                    op['giacenza'] = -quantitaVendita  # Aggiornamento automatico
+    def aggiungiVendita(self, sku, quantitaVendita, paese):
+        """Aggiunge una vendita al database"""
+        lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+        self.id_auto = max(op['idOperazione'] for op in lista_operazioni) + 1 if lista_operazioni else 1
+        self.data_formatted = self.data.strftime("%d-%m-%Y")
+        line = (
+            f"\n{sku}, "
+            f"{quantitaVendita}, "
+            f"{-quantitaVendita}, "
+            f"{paese}, "
+            f"{self.data_formatted}, "
+            f"{self.id_auto}"
+        )
+        with open("../Model/databaseOperazioni.txt", 'a') as file:
+            file.write(line)
 
-                if self.paese not in (None, ""):
-                    op['paese'] = paese
+    def aggiungiGiacenza(self, sku, quantitaGiacenza, paese):
+        """Aggiunge una vendita al database"""
+        lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+        self.id_auto = max(op['idOperazione'] for op in lista_operazioni) + 1 if lista_operazioni else 1
+        self.data_formatted = self.data.strftime("%d-%m-%Y")
+        line=(
+            f"\n{sku}, "
+            f"{0}, "
+            f"{quantitaGiacenza}, "
+            f"{paese}, "
+            f"{self.data_formatted}, "
+            f"{self.id_auto}"
+        )
+        with open("../Model/databaseOperazioni.txt", 'a') as file:
+            file.write(line)
 
-                if self.data is None:
-                    op['data'] = data.strftime('%d-%m-%Y')
+    def modificaGiacenza(self, id_set, sku_set, quantitaGiacenza, paese, data):
 
-                print("fatto tutto")
+        lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+        operazione_giacenza_trovata= False
+        controllo=operazione.separaOperazioni()
 
-                # break
-            # if not operazione_trovata:
-            #     raise ValueError(f"ID operazione {id_set} non trovato")
+        if controllo is False:
+            for op in lista_operazioni:
+                if op['idOperazione'] == id_set:
 
-            print("fuori2")
-            lines = []
-            for op1 in lista_operazioni:
-                print("dentro2")
-                line = (
-                    f"{op1['sku']}, "
-                    f"{op1['vendita']}, "
-                    f"{op1['giacenza']}, "
-                    f"{op1['paese']}, "
-                    f"{op1['data']}, "
-                    f"{op1['idOperazione']}"
-                )
-                lines.append(line)
+                    operazione_giacenza_trovata=True
 
-            print(op1['data'])
+                    if sku_set is not None:
+                        op['sku'] = sku_set
 
-            try:
-                with open("../db/databaseOperazioni.txt", 'w') as file:
-                    file.write("\n".join(lines))
-            except Exception as e:
-                raise RuntimeError(f"Errore salvataggio database: {str(e)}")
+                    if quantitaGiacenza != 0:
+                        op['giacenza'] = quantitaGiacenza  # Aggiornamento automatico
 
-    def modificaGiacenza(self):
-        pass
+                    if paese is not None:
+                        op['paese'] = paese
 
-    # def aggiornaDb(self):
-    #     """Scrive l'operazione nel file database."""
-    #     nome_file = "db/databaseOperazioni.txt"
-    #     data_str = self.data.strftime('%d-%m-%Y')
-    #     sku = self.articolo.sku  # Assumendo che Articolo abbia attributo sku
-    #     linea = (
-    #         f"{sku}, {self.quantitaVendita}, {self.quantitaGiacenza}, "
-    #         f"{self.paese}, {data_str}, {self.id}\n"
-    #     )
-    #     try:
-    #         with open(nome_file, 'a') as file:
-    #             file.write(linea)
-    #     except Exception as e:
-    #         print(f"Errore durante il salvataggio: {e}")
-    #         raise
+                    if data is not None:
+                        op['data'] = data.strftime('%d-%m-%Y')
+
+                lines = []
+                for op1 in lista_operazioni:
+                    data_formatted = op1['data'].strftime('%d-%m-%Y')
+                    line = (
+                        f"{op1['sku']}, "
+                        f"{op1['vendita']}, "
+                        f"{op1['giacenza']}, "
+                        f"{op1['paese']}, "
+                        f"{data_formatted}, "
+                        f"{op1['idOperazione']}"
+                    )
+                    lines.append(line)
+
+                try:
+                    with open("../Model/databaseOperazioni.txt", 'w') as file:
+                        file.write("\n".join(lines))
+                except Exception as e:
+                    raise RuntimeError(f"Errore salvataggio database: {str(e)}")
+        else:
+            print("errore")
+
+        if not operazione_giacenza_trovata:
+            raise ValueError(f"ID operazione {id_set} non trovato")
+
+    def modificaVendita(self, id_set, sku_set, quantitaVendita, paese, data):
+
+        lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+        operazione_trovata= False
+        controllo=operazione.separaOperazioni()
+
+        if controllo:
+            for op in lista_operazioni:
+                if op['idOperazione'] == id_set:
+                    operazione_trovata=True
+
+                    if sku_set is not None:
+                        op['sku'] = sku_set
+
+                    if quantitaVendita != 0:
+                        op['vendita'] = quantitaVendita
+                        op['giacenza'] = -quantitaVendita  # Aggiornamento automatico
+
+                    if paese is not None:
+                        op['paese'] = paese
+
+                    if data is not None:
+                        op['data'] = data.strftime('%d-%m-%Y')
+
+                lines = []
+                for op1 in lista_operazioni:
+                    data_formatted = op1['data'].strftime('%d-%m-%Y')
+                    line = (
+                        f"{op1['sku']}, "
+                        f"{op1['vendita']}, "
+                        f"{op1['giacenza']}, "
+                        f"{op1['paese']}, "
+                        f"{data_formatted}, "
+                        f"{op1['idOperazione']}"
+                    )
+                    lines.append(line)
+
+                try:
+                    with open("../Model/databaseOperazioni.txt", 'w') as file:
+                        file.write("\n".join(lines))
+                except Exception as e:
+                    raise RuntimeError(f"Errore salvataggio database: {str(e)}")
+        else:
+            print("errore")
+
+        if not operazione_trovata:
+            raise ValueError(f"ID operazione {id_set} non trovato")
 
 
 # test metodi
 # operazione = Operazione(sku="922WE", quantitaGiacenza=15, paese="Italia")
 operazione = Operazione()
-operazione.modificaVendita(1, "922WE", 51, 0, None, None)
-# operazione.aggiungiVendita()
+operazione.modificaVendita(436, "162FG", 1, "Italia", None)
+# operazione.modificaGiacenza(99, "922WE", 51, "Italia", None)
+# operazione.aggiungiGiacenza("922WE", 15, "Italia")
+operazione.aggiungiVendita("922WE", 50, "Germania")
