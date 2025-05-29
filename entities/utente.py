@@ -132,7 +132,7 @@ class Magazziniere(Utente):
 
 #test metodi
 
-lista_utenti=letturaDatabaseUtenti("../Model/databaseUtenti.txt")
+# lista_utenti=letturaDatabaseUtenti("../Model/databaseUtenti.txt")
 # print(lista_utenti)
 
 

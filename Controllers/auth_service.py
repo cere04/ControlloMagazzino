@@ -4,10 +4,10 @@ from entities.utente import Utente, get_utente_by_id, letturaDatabaseUtenti
 
 class AuthService:
 
-    def loginUtente(self, id) -> bool:
+    def loginUtente(self, id):
         """Esegue il login con il codice dipendente"""
         # utente = self.utente.get_utente_by_id(id)
-        lista_utenti=letturaDatabaseUtenti("../Model/databaseUtenti.txt")
+        lista_utenti=letturaDatabaseUtenti("Model/databaseUtenti.txt")
         utente= get_utente_by_id(id, lista_utenti)
 
         if utente:
@@ -49,7 +49,7 @@ class AuthService:
 
     def aggiungiUtenti(self,nome, cognome, ruolo ) -> bool:
         """Aggiunge un nuovo utente al sistema"""
-        with open ("../Model/databaseUtenti.txt", "r") as  file1:
+        with open ("Model/databaseUtenti.txt", "r") as  file1:
             n = 1
             for riga in file1 :
                 n +=1
@@ -58,7 +58,7 @@ class AuthService:
 
         cu = nome[0] + '.' + cognome + str(n) + ruolo[0]
         #print(cu)
-        with open ("../Model/databaseUtenti.txt", "a") as file:
+        with open ("Model/databaseUtenti.txt", "a") as file:
             file.write(f"\n{nome}, {cognome}, {ruolo}, {cu}")
         return cu
 
@@ -67,6 +67,6 @@ class AuthService:
 #test metodi
 
 # lista_utenti=letturaDatabaseUtenti("../Model/databaseUtenti.txt")
-utente=AuthService()
-prova=utente.loginUtente("m.rossi1M")
-print(prova)
+# utente=AuthService()
+# prova=utente.loginUtente("m.rossi1M")
+# print(prova)

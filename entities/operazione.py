@@ -130,7 +130,7 @@ class Operazione:
     def separaOperazioni(self):
         '''metodo per dividere le operazioni in giacenze e vendite '''
 
-        lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+        lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         lista_vendite=[]
         lista_giacenze=[]
         controllo=None
@@ -147,23 +147,24 @@ class Operazione:
 
     def aggiungiVendita(self, sku, quantitaVendita, paese):
         """Aggiunge una vendita al database"""
-        lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+        lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         self.id_auto = max(op['idOperazione'] for op in lista_operazioni) + 1 if lista_operazioni else 1
         self.data_formatted = self.data.strftime("%d-%m-%Y")
         line = (
             f"\n{sku}, "
             f"{quantitaVendita}, "
-            f"{-quantitaVendita}, "
+            f"-{quantitaVendita}, "
             f"{paese}, "
             f"{self.data_formatted}, "
             f"{self.id_auto}"
         )
-        with open("../Model/databaseOperazioni.txt", 'a') as file:
+        print(line)
+        with open("Model/databaseOperazioni.txt", 'a') as file:
             file.write(line)
 
     def aggiungiGiacenza(self, sku, quantitaGiacenza, paese):
         """Aggiunge una vendita al database"""
-        lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+        lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         self.id_auto = max(op['idOperazione'] for op in lista_operazioni) + 1 if lista_operazioni else 1
         self.data_formatted = self.data.strftime("%d-%m-%Y")
         line=(
@@ -174,12 +175,12 @@ class Operazione:
             f"{self.data_formatted}, "
             f"{self.id_auto}"
         )
-        with open("../Model/databaseOperazioni.txt", 'a') as file:
+        with open("Model/databaseOperazioni.txt", 'a') as file:
             file.write(line)
 
     def modificaGiacenza(self, id_set, sku_set, quantitaGiacenza, paese, data):
 
-        lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+        lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         operazione_giacenza_trovata= False
         controllo=operazione.separaOperazioni()
 
@@ -215,7 +216,7 @@ class Operazione:
                     lines.append(line)
 
                 try:
-                    with open("../Model/databaseOperazioni.txt", 'w') as file:
+                    with open("Model/databaseOperazioni.txt", 'w') as file:
                         file.write("\n".join(lines))
                 except Exception as e:
                     raise RuntimeError(f"Errore salvataggio database: {str(e)}")
@@ -227,7 +228,7 @@ class Operazione:
 
     def modificaVendita(self, id_set, sku_set, quantitaVendita, paese, data):
 
-        lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+        lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         operazione_trovata= False
         controllo=operazione.separaOperazioni()
 
@@ -263,7 +264,7 @@ class Operazione:
                     lines.append(line)
 
                 try:
-                    with open("../Model/databaseOperazioni.txt", 'w') as file:
+                    with open("Model/databaseOperazioni.txt", 'w') as file:
                         file.write("\n".join(lines))
                 except Exception as e:
                     raise RuntimeError(f"Errore salvataggio database: {str(e)}")
@@ -277,7 +278,7 @@ class Operazione:
 # test metodi
 # operazione = Operazione(sku="922WE", quantitaGiacenza=15, paese="Italia")
 operazione = Operazione()
-operazione.modificaVendita(436, "162FG", 1, "Italia", None)
+# operazione.modificaVendita(436, "162FG", 1, "Italia", None)
 # operazione.modificaGiacenza(99, "922WE", 51, "Italia", None)
 # operazione.aggiungiGiacenza("922WE", 15, "Italia")
-operazione.aggiungiVendita("922WE", 50, "Germania")
+# operazione.aggiungiVendita("922WE", 50, "Germania")
