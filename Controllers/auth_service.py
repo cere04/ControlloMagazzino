@@ -12,7 +12,9 @@ class AuthService:
 
         if utente:
             return utente
-        return("Utente non trovato")
+        else:
+            return None
+        #return("Utente non trovato")
 
     def logout(self) -> None:
         """Esegue il logout dell'utente corrente"""
@@ -45,9 +47,21 @@ class AuthService:
         """Verifica se l'utente corrente ha i permessi richiesti"""
         # return SecurityUtils.verifica_ruolo(self.utente_corrente, ruolo_richiesto)
 
-    def aggiungiDbUtenti(self, utente: Utente) -> bool:
+    def aggiungiUtenti(self,nome, cognome, ruolo ) -> bool:
         """Aggiunge un nuovo utente al sistema"""
-        pass
+        with open ("../Model/databaseUtenti.txt", "r") as  file1:
+            n = 1
+            for riga in file1 :
+                n +=1
+                if not riga:
+                    continue
+
+        cu = nome[0] + '.' + cognome + str(n) + ruolo[0]
+        #print(cu)
+        with open ("../Model/databaseUtenti.txt", "a") as file:
+            file.write(f"\n{nome}, {cognome}, {ruolo}, {cu}")
+        return cu
+
 
 
 #test metodi
