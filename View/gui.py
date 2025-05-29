@@ -3,11 +3,12 @@ from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
 from PyQt5.QtGui import QFontDatabase, QColor, QPainter
 from PyQt5.QtCore import Qt
 from PyQt5.QtChart import QChart, QChartView, QBarSeries, QBarSet, QPieSeries, QBarCategoryAxis, QValueAxis
-from Controllers.operation_service import (filtraOperazioni, calcolaVenditeTotali, calcolaGiacenzaMedia)
+from Controllers.operation_service import (filtraOperazioni, calcolaVenditeTotali, giacenzaMediaMensile)
 from entities.operazione import (letturaDatabaseArticoli, letturaDatabaseOperazioni, Operazione)
 from entities.articolo import Articolo
 from entities.enums import GenereArticolo, TipologiaArticolo, TipoOperazione, Zone
 from datetime import datetime
+
 
 
 class MainWindow(QMainWindow):
@@ -490,3 +491,4 @@ class MainWindow(QMainWindow):
 
     def ottieniLivelloAccesso(self):
         pass
+

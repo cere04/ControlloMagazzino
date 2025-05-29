@@ -33,7 +33,7 @@ def letturaDatabaseUtenti(nome_file: str)-> List[Dict[str, str]]:
 
     return lista_utenti
 
-def get_utente_by_id(id: int, lista_utenti: List[Dict[str, Any]]) -> dict[str, Any] | None:
+def get_utente_by_id(id: str, lista_utenti: List[Dict[str, Any]]) -> dict[str, Any] | None:
     for utente in lista_utenti:
         if utente['id'] == id:
             return utente
