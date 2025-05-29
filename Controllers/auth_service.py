@@ -1,18 +1,18 @@
 from entities.enums import RuoloUtente
-from entities.utente import Utente
+from entities.utente import Utente, get_utente_by_id, letturaDatabaseUtenti
 
 
 class AuthService:
 
-    def login(self, codice_dipendente: str) -> bool:
+    def loginUtente(self, id) -> bool:
         """Esegue il login con il codice dipendente"""
-        utente = self.utente_repository.get_utente_by_codice(codice_dipendente)
+        # utente = self.utente.get_utente_by_id(id)
+        lista_utenti=letturaDatabaseUtenti("../Model/databaseUtenti.txt")
+        utente= get_utente_by_id(id, lista_utenti)
 
-        if utente and utente.attivo:
-            self.utente_corrente = utente
-            self.utente_repository.aggiorna_ultimo_accesso(utente.id)
-            return True
-        return False
+        if utente:
+            return utente
+        return("Utente non trovato")
 
     def logout(self) -> None:
         """Esegue il logout dell'utente corrente"""
@@ -48,3 +48,11 @@ class AuthService:
     def aggiungiDbUtenti(self, utente: Utente) -> bool:
         """Aggiunge un nuovo utente al sistema"""
         pass
+
+
+#test metodi
+
+# lista_utenti=letturaDatabaseUtenti("../Model/databaseUtenti.txt")
+utente=AuthService()
+prova=utente.loginUtente("m.rossi1M")
+print(prova)

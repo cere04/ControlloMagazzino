@@ -12,3 +12,5 @@ app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
 window.show()
 app.exec()
+
+#main crea login window, da login viene resitituto l'oggetto e poi viene mostrata la rispettiva view
