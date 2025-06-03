@@ -1,4 +1,4 @@
 Mario, Rossi, Magazziniere, m.rossi1M
 Giovanni, Bianchi, Commesso, g.bianchi2C
 Sergio, Verdi, Responsabile Commerciale, s.verdi3R
-Giorgio, Giorgi, Admin, G.Giorgi4A
+Mario, Rossi, Commesso, M.Rossi4C

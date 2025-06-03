@@ -220,18 +220,18 @@ class FinestraM(QWidget):
         self.numero_ag = QLineEdit()
         self.numero_ag.setMaximumWidth(100)
         self.sku_ag = QLineEdit()
-        self.numero_ag.setMaximumWidth(100)
+        self.sku_ag.setMaximumWidth(100)
         self.numero_mg = QLineEdit()
-        self.numero_ag.setMaximumWidth(100)
+        self.numero_mg.setMaximumWidth(100)
         self.sku_mg = QLineEdit()
-        self.numero_ag.setMaximumWidth(100)
+        self.sku_mg.setMaximumWidth(100)
         self.id_Giacenza = QLineEdit()
-        self.numero_ag.setMaximumWidth(100)
+        self.id_Giacenza.setMaximumWidth(100)
         aggiungi = QPushButton("Aggiungi")
         modifica = QPushButton("Modifica")
 
         layoutH5.addWidget(QLabel('NUOVA GIACENZA'))
-        layoutH5.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        #layoutH5.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layoutM.addLayout(layoutH5)
 
 
@@ -244,7 +244,7 @@ class FinestraM(QWidget):
         layoutM.addWidget(aggiungi)
 
         layoutH6.addWidget(QLabel('MODIFICA GIACENZA'))
-        layoutH6.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        #layoutH6.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layoutM.addLayout(layoutH6)
 
         layoutH3.addWidget(QLabel('ID GIACENZA:'))

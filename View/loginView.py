@@ -2,7 +2,7 @@ from Controllers.auth_service import AuthService
 from View.magazziniereView import FinestraM
 from View.commessoView import FinestraC
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QMessageBox
-
+from View.registrazioneView import FinestraR
 
 class Finestra1(QWidget):
     def __init__(self):
@@ -15,14 +15,14 @@ class Finestra1(QWidget):
         self.Inserimento = QLineEdit()
         self.Inserimento.setPlaceholderText("Codice Utente")
         self.Accedi = QPushButton("Accedi")
-        # self.Registrati = QPushButton("Registrati")
-        # self.Accedi.clicked.connect(self.afa)
-        # self.Registrati.clicked.connect(self.afr)
+        self.Registrati = QPushButton("Registrati")
+        #self.Accedi.clicked.connect(self.afa)
+        self.Registrati.clicked.connect(self.finestraRegistrazione)
         self.F1L.addWidget(self.Inserimento)
         self.F1L.addWidget(self.Accedi)
         self.Accedi.clicked.connect(self.accesso)
-        # self.F1L.addWidget(self.Registrati)
-        # self.finestraA = FinestraA()
+        self.F1L.addWidget(self.Registrati)
+        self.finestra_r = FinestraR(self)
         # self.finestraR = FinestraR()
     def accesso (self) :
         A = AuthService()
@@ -53,7 +53,13 @@ class Finestra1(QWidget):
         # self.hide()
         # self.finestraA = FinestraA()
         # self.finestraA.show()
-    def afr (self) :
+    def finestraRegistrazione (self) :
+        self.finestra_r.show()
         self.hide()
-        # self.finestraR = FinestraR()
-        self.finestraR.show()
+        #if self.finestraR.Registrazione() == True:
+            #print("ciao")
+            #self.show()
+            #self.finestraR.hide()
+
+
+

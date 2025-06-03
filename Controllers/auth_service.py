@@ -4,7 +4,7 @@ from entities.utente import Utente, get_utente_by_id, letturaDatabaseUtenti
 
 class AuthService:
 
-    def loginUtente(self, id):
+    def loginUtente(self, id) -> bool:
         """Esegue il login con il codice dipendente"""
         # utente = self.utente.get_utente_by_id(id)
         lista_utenti=letturaDatabaseUtenti("Model/databaseUtenti.txt")
@@ -67,6 +67,6 @@ class AuthService:
 #test metodi
 
 # lista_utenti=letturaDatabaseUtenti("../Model/databaseUtenti.txt")
-# utente=AuthService()
-# prova=utente.loginUtente("m.rossi1M")
-# print(prova)
+#utente=AuthService()
+#prova=utente.loginUtente("m.rossi1M")
+#print(prova)
