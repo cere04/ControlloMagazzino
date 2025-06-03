@@ -218,23 +218,23 @@ def filtraOperazioni(lista_operazioni: List[Dict[str, any]],
 
 #test metodi
 
-lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
-lista_articoli = letturaDatabaseArticoli("../Model/databaseArticoli.txt")
-
-dati_filtrati = filtraOperazioni(lista_operazioni ,lista_articoli , [], [], [])
-
-giacenza_media = [0] * 12
-
-vendite_totali = calcolaVenditeTotali(lista_operazioni)
-
-for i in range(12):
-    operazioni_ordinate=ordinamentoOperazioni(dati_filtrati, i+1)
-    giacenza_media[i]=giacenzaMediaMensile(operazioni_ordinate, i+1)
-
-indice_rotazione=indiceRotazione(vendite_totali, giacenza_media)
-print("vendite totali:", vendite_totali)
-print("giacenza media:",giacenza_media)
-print("indice rotazione:", indice_rotazione)
+# lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
+# lista_articoli = letturaDatabaseArticoli("../Model/databaseArticoli.txt")
+#
+# dati_filtrati = filtraOperazioni(lista_operazioni ,lista_articoli , [], [], [])
+#
+# giacenza_media = [0] * 12
+#
+# vendite_totali = calcolaVenditeTotali(lista_operazioni)
+#
+# for i in range(12):
+#     operazioni_ordinate=ordinamentoOperazioni(dati_filtrati, i+1)
+#     giacenza_media[i]=giacenzaMediaMensile(operazioni_ordinate, i+1)
+#
+# indice_rotazione=indiceRotazione(vendite_totali, giacenza_media)
+# print("vendite totali:", vendite_totali)
+# print("giacenza media:",giacenza_media)
+# print("indice rotazione:", indice_rotazione)
 
 
 
