@@ -60,7 +60,7 @@ class FinestraM(QWidget):
         self.setLayout(layoutM)
     def aggiunta(self):
         O = Operazione()
-        x = O.aggiungiGiacenza(self.sku_ag.text(), self.numero_ag.text(), "Brancadoro")
+        x = O.aggiungiGiacenza(self.sku_ag.text(), self.numero_ag.text())
         print("operazione aggiunta")
 
     def modifica(self):

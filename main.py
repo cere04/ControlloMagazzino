@@ -7,9 +7,9 @@ from View.adminView import adminWindow
 #     def __init__(self, *args, obj=None, **kwargs):
 #         super().__init__(*args, **kwargs)
 #         self.setupUi(self)
-
+#
 # app = QtWidgets.QApplication(sys.argv)
-# window = adminWindow()
+# window = Finestra1()
 # window.show()
 # app.exec()
 
@@ -28,5 +28,6 @@ if __name__ == "__main__":
 
 
 # importante!!!!! inserire controllo per vendita maggiore della giacenza effettiva
+#sistemare modificaVendita/Giacenza
 # creare pagina responsabile commerciale, amministratore, creazione account
 # implementare in comessoView il metodo modificaVendita e in magazziniereView il metodo modificaGiacenza
