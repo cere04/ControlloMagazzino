@@ -1,5 +1,5 @@
 from entities.operazione import letturaDatabaseArticoli
-from enums import TipologiaArticolo, GenereArticolo, UnitaMisura
+from entities.enums import TipologiaArticolo, GenereArticolo, UnitaMisura
 
 
 class Articolo:
@@ -14,7 +14,7 @@ class Articolo:
 
     def aggiungiArticolo(self):
         '''metodo per l'aggiunta di un nuovo articolo nel database articoli'''
-        with open("../Model/databaseArticoli.txt", "a") as file:
+        with open("Model/databaseArticoli.txt", "a") as file:
             file.write(f"\n{self.sku}, {self.genere}, {self.tipologia}")
 
     def modificaArticolo(self, sku_set, genere, tipologia):
@@ -76,8 +76,8 @@ class Articolo:
 
 
 #test metodi
-articolo = Articolo()
+# articolo = Articolo()
 # articolo.aggiungiArticolo()
 # articolo.modificaArticolo("687YP", "donna", "borsa")
-articolo.eliminaArticolo("301FN")
+# articolo.eliminaArticolo("301FN")
 

@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from typing import List, Dict, Any
+from zipimport import path_sep
 
 
 def letturaDatabaseArticoli(nome_file: str) -> List[Dict[str, str]]:
@@ -140,7 +141,6 @@ class Operazione:
             f"{self.data_formatted}, "
             f"{self.id_auto}"
         )
-        print(line)
         with open("Model/databaseOperazioni.txt", 'a') as file:
             file.write(line)
 
@@ -160,7 +160,7 @@ class Operazione:
         with open("Model/databaseOperazioni.txt", 'a') as file:
             file.write(line)
 
-    def modificaGiacenza(self, id_set, sku_set, quantitaGiacenza, paese, data):
+    def modificaGiacenza(self, id_set, sku_set, quantitaGiacenza, paese):
 
         lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         operazione_giacenza_trovata= False
@@ -178,9 +178,6 @@ class Operazione:
 
                 if paese is not None:
                     op['paese'] = paese
-
-                if data is not None:
-                    op['data'] = data.strftime('%d-%m-%Y')
 
                 op['vendita']=0
 
@@ -206,10 +203,13 @@ class Operazione:
         if not operazione_giacenza_trovata:
             raise ValueError(f"ID operazione {id_set} non trovato")
 
-    def modificaVendita(self, id_set, sku_set, quantitaVendita, paese, data):
-
+    def modificaVendita(self, id_set, sku_set, quantitaVendita, paese):
         lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         operazione_trovata= False
+
+        sku_set:str
+        quantitaVendita:int
+        paese:str
 
         for op in lista_operazioni:
             if op["idOperazione"] == id_set:
@@ -220,26 +220,22 @@ class Operazione:
 
                 if quantitaVendita != 0:
                     op['vendita'] = quantitaVendita
-                    op['giacenza'] = -quantitaVendita  # Aggiornamento automatico
 
                 if paese is not None:
                     op['paese'] = paese
 
-                if data is not None:
-                    op['data'] = data.strftime('%d-%m-%Y')
-
-            lines = []
-            for op1 in lista_operazioni:
-                data_formatted = op1['data'].strftime('%d-%m-%Y')
-                line = (
-                    f"{op1['sku']}, "
-                    f"{op1['vendita']}, "
-                    f"{op1['giacenza']}, "
-                    f"{op1['paese']}, "
-                    f"{data_formatted}, "
-                    f"{op1['idOperazione']}"
-                )
-                lines.append(line)
+        lines = []
+        for op1 in lista_operazioni:
+            data_formatted = op1['data'].strftime('%d-%m-%Y')
+            line = (
+                f"{op1['sku']}, "
+                f"{op1['vendita']}, "
+                f"{op1['giacenza']}, "
+                f"{op1['paese']}, "
+                f"{data_formatted}, "
+                f"{op1['idOperazione']}"
+            )
+            lines.append(line)
 
             try:
                 with open("Model/databaseOperazioni.txt", 'w') as file:
@@ -250,31 +246,13 @@ class Operazione:
         if not operazione_trovata:
             raise ValueError(f"ID operazione {id_set} non trovato")
 
-def cambiaNomi(self):
-    lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
-
-    lines = []
-    for op in lista_operazioni:
-        if op['vendita']==0:
-            for op1 in lista_operazioni:
-                data_formatted = op1['data'].strftime('%d-%m-%Y')
-                line = (
-                    f"{op1['sku']}, "
-                    f"{op1['vendita']}, "
-                    f"{op1['giacenza']}, "
-                    f"Brancadoro, "
-                    f"{data_formatted}, "
-                    f"{op1['idOperazione']}"
-                )
-                lines.append(line)
-
 
 
 
 # test metodi
 
 # operazione = Operazione()
-# operazione.modificaVendita(437, "922WE", 10, None, None)
+# operazione.modificaVendita(437, "922WE", 10, None)
 # operazione.modificaGiacenza(437, "922WE", 51, "Italia", None)
 # operazione.aggiungiGiacenza("922WE", 15)
 # operazione.aggiungiVendita("922WE", 50, "Germania")
