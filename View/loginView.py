@@ -3,7 +3,7 @@ from View.magazziniereView import FinestraM
 from View.commessoView import FinestraC
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QMessageBox
 from View.registrazioneView import FinestraR
-
+from View.responsabileView import FinestraRC
 class Finestra1(QWidget):
     def __init__(self):
         super().__init__()
@@ -42,10 +42,10 @@ class Finestra1(QWidget):
             self.hide()
             self.finestra_c = FinestraC()
             self.finestra_c.show()
-        # elif x['ruoloUtente'] == 'Responsabile Commerciale':
-        #     self.hide()
-        #     self.finestra_rc = FinestraRC()
-        #     self.finestra_rc.show()
+        elif x['ruoloUtente'] == 'Responsabile Commerciale':
+            self.hide()
+            self.finestra_rc = FinestraRC()
+            self.finestra_rc.show()
         # elif x['ruoloUtente'] == 'Responsabile Commerciale':
         #     self.hide()
         #     self.finestra_ad = FinestraAD()

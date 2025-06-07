@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from typing import List, Dict, Any
+from zipimport import path_sep
 
 
 def letturaDatabaseArticoli(nome_file: str) -> List[Dict[str, str]]:
@@ -140,7 +141,6 @@ class Operazione:
             f"{self.data_formatted}, "
             f"{self.id_auto}"
         )
-        print(line)
         with open("Model/databaseOperazioni.txt", 'a') as file:
             file.write(line)
 
@@ -160,29 +160,29 @@ class Operazione:
         with open("Model/databaseOperazioni.txt", 'a') as file:
             file.write(line)
 
-    def modificaGiacenza(self, id_set, sku_set, quantitaGiacenza, paese, data):
+    def modificaGiacenza(self, id_set, sku_set, quantitaGiacenza, paese):
 
         lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         operazione_giacenza_trovata= False
+        errore_tipo_op = False
+        try:
+            int(quantitaGiacenza)
+        except ValueError:
+            quantitaGiacenza = 0
 
         for op in lista_operazioni:
             if op['idOperazione'] == id_set:
+                operazione_giacenza_trovata = True
+                if op['vendita'] == 0:
+                    errore_tipo_op = True
+                    if sku_set != '':
+                        op['sku'] = sku_set
+                    if quantitaGiacenza != 0:
+                        op['giacenza'] = quantitaGiacenza  # Aggiornamento automatico
+                    if paese is not None:
+                        op['paese'] = paese
+                    op['vendita']=0
 
-                operazione_giacenza_trovata=True
-
-                if sku_set is not None:
-                    op['sku'] = sku_set
-
-                if quantitaGiacenza != 0:
-                    op['giacenza'] = quantitaGiacenza  # Aggiornamento automatico
-
-                if paese is not None:
-                    op['paese'] = paese
-
-                if data is not None:
-                    op['data'] = data.strftime('%d-%m-%Y')
-
-                op['vendita']=0
 
             lines = []
             for op1 in lista_operazioni:
@@ -205,41 +205,49 @@ class Operazione:
 
         if not operazione_giacenza_trovata:
             raise ValueError(f"ID operazione {id_set} non trovato")
+        if operazione_giacenza_trovata == True and errore_tipo_op == False:
+            print("l'operazione cercata è una vendita, non una giacenza")
 
-    def modificaVendita(self, id_set, sku_set, quantitaVendita, paese, data):
 
+
+    def modificaVendita(self, id_set, sku_set, quantitaVendita, paese):
         lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         operazione_trovata= False
+        tipo_op = False
+
+        try :
+            int(quantitaVendita)
+        except ValueError:
+            quantitaVendita = 0
+
+        sku_set:str
+        paese:str
 
         for op in lista_operazioni:
             if op["idOperazione"] == id_set:
-                operazione_trovata=True
+                operazione_trovata = True
+                if op['vendita'] != 0:
+                    tipo_op = True
+                    if sku_set != '':
+                        op['sku'] = sku_set
+                    if quantitaVendita != 0:
+                        op['vendita'] = quantitaVendita
+                        op['giacenza'] = '-'+ str(quantitaVendita)
+                    if paese != '':
+                        op['paese'] = paese
 
-                if sku_set is not None:
-                    op['sku'] = sku_set
-
-                if quantitaVendita != 0:
-                    op['vendita'] = quantitaVendita
-                    op['giacenza'] = -quantitaVendita  # Aggiornamento automatico
-
-                if paese is not None:
-                    op['paese'] = paese
-
-                if data is not None:
-                    op['data'] = data.strftime('%d-%m-%Y')
-
-            lines = []
-            for op1 in lista_operazioni:
-                data_formatted = op1['data'].strftime('%d-%m-%Y')
-                line = (
-                    f"{op1['sku']}, "
-                    f"{op1['vendita']}, "
-                    f"{op1['giacenza']}, "
-                    f"{op1['paese']}, "
-                    f"{data_formatted}, "
-                    f"{op1['idOperazione']}"
-                )
-                lines.append(line)
+        lines = []
+        for op1 in lista_operazioni:
+            data_formatted = op1['data'].strftime('%d-%m-%Y')
+            line = (
+                f"{op1['sku']}, "
+                f"{op1['vendita']}, "
+                f"{op1['giacenza']}, "
+                f"{op1['paese']}, "
+                f"{data_formatted}, "
+                f"{op1['idOperazione']}"
+            )
+            lines.append(line)
 
             try:
                 with open("Model/databaseOperazioni.txt", 'w') as file:
@@ -249,32 +257,17 @@ class Operazione:
 
         if not operazione_trovata:
             raise ValueError(f"ID operazione {id_set} non trovato")
+        if operazione_trovata == True and tipo_op == False :
+            print("L'operazione cercata è una giacenza, non è una vendita")
 
-def cambiaNomi(self):
-    lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
-
-    lines = []
-    for op in lista_operazioni:
-        if op['vendita']==0:
-            for op1 in lista_operazioni:
-                data_formatted = op1['data'].strftime('%d-%m-%Y')
-                line = (
-                    f"{op1['sku']}, "
-                    f"{op1['vendita']}, "
-                    f"{op1['giacenza']}, "
-                    f"Brancadoro, "
-                    f"{data_formatted}, "
-                    f"{op1['idOperazione']}"
-                )
-                lines.append(line)
 
 
 
 
 # test metodi
 
-# operazione = Operazione()
-# operazione.modificaVendita(437, "922WE", 10, None, None)
+#operazione = Operazione()
+#operazione.modificaVendita(2, '','', '')
 # operazione.modificaGiacenza(437, "922WE", 51, "Italia", None)
 # operazione.aggiungiGiacenza("922WE", 15)
 # operazione.aggiungiVendita("922WE", 50, "Germania")
