@@ -93,11 +93,11 @@ class FinestraC(QWidget):
     def modifica_v_(self):
         SKU_MV = str(self.sku_mv.text())
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
-        n = 0
+        n = False
         for art in lista_articoli:
-            if art['sku'] == SKU_MV:
-                n += 1
-        if n==1:
+            if art['sku'] == SKU_MV or SKU_MV == '':
+                n = True
+        if n is True:
             OpP = Operazione()
             t = OpP.modificaVendita(int(self.id_Vendita.text()), str(self.sku_mv.text()), str(self.numero_mv.text()),str(self.paese_mv.text()))
             if t == True:

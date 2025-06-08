@@ -204,8 +204,7 @@ class Operazione:
                 raise RuntimeError(f"Errore salvataggio database: {str(e)}")
 
         if not operazione_giacenza_trovata:
-            raise ValueError(f"ID operazione {id_set} non trovato")
-            return 'non trovato'
+            return 'Errore'
         if operazione_giacenza_trovata == True and errore_tipo_op == False:
             return True
 
@@ -257,7 +256,7 @@ class Operazione:
                 raise RuntimeError(f"Errore salvataggio database: {str(e)}")
 
         if not operazione_trovata:
-            raise ValueError(f"ID operazione {id_set} non trovato")
+            return 'non trovato'
         if operazione_trovata == True and tipo_op == False :
             return True
 

@@ -385,24 +385,60 @@ class adminWindow(object):
         x = A.aggiungiArticolo()
 
     def modificaVendita(self):
-        O=Operazione()
 
-        id_set:int=self.lineEdit_9.text()
-        sku_set:str=self.lineEdit.text()
-        quantita:str=self.spinBox_3.value()
-        paese:str=self.lineEdit_10.text()
-
-        O.modificaVendita(int(self.lineEdit_9.text()), str(self.lineEdit.text()), str(self.spinBox_3.value()), str(self.lineEdit_10.text()))
-        print("Modifica apportata")
-
-    def modificaGiacenza(self):
-        Opp = Operazione()
-        k = Opp.modificaGiacenza(int(self.id_Giacenza.text()), str(self.sku_mg.text()), str(self.numero_mg.text()),None)
-        if k == True:
+        SKU_MV = str(self.lineEdit.text())
+        lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+        n = False
+        for art in lista_articoli:
+            if art['sku'] == SKU_MV or SKU_MV == '':
+                n = True
+        if n is True:
+            OpP = Operazione()
+            t = OpP.modificaVendita(int(self.lineEdit_9.text()), str(self.lineEdit.text()), str(self.spinBox_3.value()),
+                                    str(self.lineEdit_10.text()))
+            if t == True:
+                y = QMessageBox()
+                y.setWindowTitle('ERRORE')
+                y.setText("L'operazione cercata non è una vendita")
+                y.exec()
+            if t == 'non trovato':
+                l = QMessageBox()
+                l.setWindowTitle('ERRORE')
+                l.setText("L'operazione non esiste")
+                l.exec()
+        else:
             p = QMessageBox()
             p.setWindowTitle('ERRORE')
-            p.setText("L'operazione selezionata non è una giacenza")
+            p.setText("SKU non esiste")
             p.exec()
+
+    def modificaGiacenza(self):
+        SKU_MG = self.lineEdit_12.text()
+
+        lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+        n = False
+        for art in lista_articoli:
+            if art['sku'] == SKU_MG or SKU_MG == '':
+                n = True
+        if n is True:
+            Opp = Operazione()
+            k = Opp.modificaGiacenza(int(self.lineEdit_11.text()), str(self.lineEdit_12.text()), str(self.spinBox_4.value()),
+                                     None)
+            if k == True:
+                p = QMessageBox()
+                p.setWindowTitle('ERRORE')
+                p.setText("L'operazione selezionata non è una giacenza")
+                p.exec()
+            elif k == 'Errore':
+                u = QMessageBox()
+                u.setWindowTitle('ERRORE')
+                u.setText("L'operazione non esiste")
+                u.exec()
+        else:
+            w = QMessageBox()
+            w.setWindowTitle('ERRORE')
+            w.setText("SKU non esiste ")
+            w.exec()
 
     def eliminaArticolo(self):
         A=Articolo()
