@@ -164,22 +164,25 @@ class Operazione:
 
         lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         operazione_giacenza_trovata= False
+        errore_tipo_op = False
+        try:
+            int(quantitaGiacenza)
+        except ValueError:
+            quantitaGiacenza = 0
 
         for op in lista_operazioni:
             if op['idOperazione'] == id_set:
+                operazione_giacenza_trovata = True
+                if op['vendita'] == 0:
+                    errore_tipo_op = True
+                    if sku_set != '':
+                        op['sku'] = sku_set
+                    if quantitaGiacenza != 0:
+                        op['giacenza'] = quantitaGiacenza  # Aggiornamento automatico
+                    if paese is not None:
+                        op['paese'] = paese
+                    op['vendita']=0
 
-                operazione_giacenza_trovata=True
-
-                if sku_set is not None:
-                    op['sku'] = sku_set
-
-                if quantitaGiacenza != 0:
-                    op['giacenza'] = quantitaGiacenza  # Aggiornamento automatico
-
-                if paese is not None:
-                    op['paese'] = paese
-
-                op['vendita']=0
 
             lines = []
             for op1 in lista_operazioni:
@@ -202,27 +205,36 @@ class Operazione:
 
         if not operazione_giacenza_trovata:
             raise ValueError(f"ID operazione {id_set} non trovato")
+        if operazione_giacenza_trovata == True and errore_tipo_op == False:
+            return True
+
+
 
     def modificaVendita(self, id_set, sku_set, quantitaVendita, paese):
         lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         operazione_trovata= False
+        tipo_op = False
+
+        try :
+            int(quantitaVendita)
+        except ValueError:
+            quantitaVendita = 0
 
         sku_set:str
-        quantitaVendita:int
         paese:str
 
         for op in lista_operazioni:
             if op["idOperazione"] == id_set:
-                operazione_trovata=True
-
-                if sku_set is not None:
-                    op['sku'] = sku_set
-
-                if quantitaVendita != 0:
-                    op['vendita'] = quantitaVendita
-
-                if paese is not None:
-                    op['paese'] = paese
+                operazione_trovata = True
+                if op['vendita'] != 0:
+                    tipo_op = True
+                    if sku_set != '':
+                        op['sku'] = sku_set
+                    if quantitaVendita != 0:
+                        op['vendita'] = quantitaVendita
+                        op['giacenza'] = '-'+ str(quantitaVendita)
+                    if paese != '':
+                        op['paese'] = paese
 
         lines = []
         for op1 in lista_operazioni:
@@ -245,14 +257,17 @@ class Operazione:
 
         if not operazione_trovata:
             raise ValueError(f"ID operazione {id_set} non trovato")
+        if operazione_trovata == True and tipo_op == False :
+            return True
+
 
 
 
 
 # test metodi
 
-# operazione = Operazione()
-# operazione.modificaVendita(437, "922WE", 10, None)
+#operazione = Operazione()
+#operazione.modificaVendita(2, '','', '')
 # operazione.modificaGiacenza(437, "922WE", 51, "Italia", None)
 # operazione.aggiungiGiacenza("922WE", 15)
 # operazione.aggiungiVendita("922WE", 50, "Germania")

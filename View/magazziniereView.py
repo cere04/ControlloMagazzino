@@ -1,6 +1,6 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel
-from entities.operazione import Operazione
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox
+from entities.operazione import Operazione, letturaDatabaseArticoli
 
 
 class FinestraM(QWidget):
@@ -15,19 +15,26 @@ class FinestraM(QWidget):
         layoutH4 = QHBoxLayout()
         layoutH5 = QHBoxLayout()
         layoutH6 = QHBoxLayout()
+
         self.numero_ag = QLineEdit()
         self.numero_ag.setMaximumWidth(100)
+
         self.sku_ag = QLineEdit()
-        self.numero_ag.setMaximumWidth(100)
-        self.numero_mg = QLineEdit()
-        self.numero_ag.setMaximumWidth(100)
-        self.sku_mg = QLineEdit()
-        self.numero_ag.setMaximumWidth(100)
+        self.sku_ag.setMaximumWidth(100)
+
         self.id_Giacenza = QLineEdit()
-        self.numero_ag.setMaximumWidth(100)
+        self.id_Giacenza.setMaximumWidth(100)
+
+        self.sku_mg = QLineEdit()
+        self.sku_mg.setMaximumWidth(100)
+
+        self.numero_mg = QLineEdit()
+        self.numero_mg.setMaximumWidth(100)
+
         aggiungi = QPushButton("Aggiungi")
         aggiungi.clicked.connect(self.aggiunta)
-        # modifica = QPushButton("Modifica")
+        modifica = QPushButton("Modifica")
+        modifica.clicked.connect(self.modifica_)
 
         layoutH5.addWidget(QLabel('NUOVA GIACENZA'))
         layoutH5.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -42,26 +49,62 @@ class FinestraM(QWidget):
 
         layoutM.addWidget(aggiungi)
 
-        # layoutH6.addWidget(QLabel('MODIFICA GIACENZA'))
-        # layoutH6.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        # layoutM.addLayout(layoutH6)
-        #
-        # layoutH3.addWidget(QLabel('ID GIACENZA:'))
-        # layoutH3.addWidget(self.numero_mg)
-        # layoutH3.addWidget(QLabel('SKU:'))
-        # layoutH3.addWidget(self.sku_mg)
-        # layoutH3.addWidget(QLabel('QUANTITÀ:'))
-        # layoutH3.addWidget(self.id_Giacenza)
-        # layoutM.addLayout(layoutH3)
-        #
-        # layoutM.addWidget(modifica)
-        #layoutM.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layoutH6.addWidget(QLabel('MODIFICA GIACENZA'))
+        layoutH6.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layoutM.addLayout(layoutH6)
+
+        layoutH3.addWidget(QLabel('ID GIACENZA:'))
+        layoutH3.addWidget(self.id_Giacenza)
+
+        layoutH3.addWidget(QLabel('SKU:'))
+        layoutH3.addWidget(self.sku_mg)
+
+        layoutH3.addWidget(QLabel('QUANTITÀ:'))
+        layoutH3.addWidget(self.numero_mg)
+
+        layoutM.addLayout(layoutH3)
+
+        layoutM.addWidget(modifica)
+        layoutM.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.setLayout(layoutM)
     def aggiunta(self):
-        O = Operazione()
-        x = O.aggiungiGiacenza(self.sku_ag.text(), self.numero_ag.text())
-        print("operazione aggiunta")
+        SKU_AG = self.sku_ag.text()
+        N_AG = self.numero_ag.text()
 
-    def modifica(self):
-        pass
+
+        if SKU_AG == '' or N_AG == '':
+            a = QMessageBox()
+            a.setWindowTitle('ERRORE')
+            a.setText('Ci sono dei campi vuoti')
+            a.exec()
+        else:
+            lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+            n = 0
+            for art in lista_articoli:
+                if art['sku']==SKU_AG:
+                    n += 1
+            if n == 1:
+                O = Operazione()
+                O.aggiungiGiacenza(self.sku_ag.text(), self.numero_ag.text())
+            else:
+                o = QMessageBox()
+                o.setWindowTitle('ERRORE')
+                o.setText('SKU NON ESISTENTE')
+                o.exec()
+
+
+    def modifica_(self):
+
+        Opp = Operazione()
+        k = Opp.modificaGiacenza(int(self.id_Giacenza.text()), str(self.sku_mg.text()), str(self.numero_mg.text()),None)
+        if k == True:
+            p = QMessageBox()
+            p.setWindowTitle('ERRORE')
+            p.setText("L'operazione selezionata non è una giacenza")
+            p.exec()
+        #oppp = Operazione()
+        #iD = int(self.id_Giacenza.text())
+        #sKu = str(self.sku_mg.text())
+        #nuM = int(self.numero_mg.text())
+        #oppp.modificaGiacenza(iD, sKu, nuM, None)

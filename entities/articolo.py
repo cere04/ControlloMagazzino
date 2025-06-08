@@ -1,5 +1,5 @@
 from entities.operazione import letturaDatabaseArticoli
-from entities.enums import TipologiaArticolo, GenereArticolo, UnitaMisura
+from enums import TipologiaArticolo, GenereArticolo, UnitaMisura
 
 
 class Articolo:
@@ -14,7 +14,7 @@ class Articolo:
 
     def aggiungiArticolo(self):
         '''metodo per l'aggiunta di un nuovo articolo nel database articoli'''
-        with open("Model/databaseArticoli.txt", "a") as file:
+        with open("../Model/databaseArticoli.txt", "a") as file:
             file.write(f"\n{self.sku}, {self.genere}, {self.tipologia}")
 
     def modificaArticolo(self, sku_set, genere, tipologia):
@@ -51,10 +51,9 @@ class Articolo:
         if not articolo_trovato:
             raise ValueError(f"SKU articolo {sku_set} non trovato")
 
-    def eliminaArticolo(self):
-        lista_articoli=letturaDatabaseArticoli("Model/databaseArticoli.txt")
-        lista_articoli_new=[]
-        sku_set=self.sku
+    def eliminaArticolo(self, sku_set):
+        lista_articoli=letturaDatabaseArticoli("../Model/databaseArticoli.txt")
+
         for art in lista_articoli:
             if art['sku'] == sku_set:
                 lista_articoli_new = [riga for riga in lista_articoli if sku_set not in riga['sku']]
@@ -69,7 +68,7 @@ class Articolo:
                 lines.append(line)
 
             try:
-                with open("Model/databaseArticoli.txt", 'w') as file:
+                with open("../Model/databaseArticoli.txt", 'w') as file:
                     file.write("\n".join(lines))
             except Exception as e:
                 raise RuntimeError(f"Errore salvataggio database: {str(e)}")
@@ -77,8 +76,8 @@ class Articolo:
 
 
 #test metodi
-# articolo = Articolo()
+#articolo = Articolo()
 # articolo.aggiungiArticolo()
 # articolo.modificaArticolo("687YP", "donna", "borsa")
-# articolo.eliminaArticolo("301FN")
+#articolo.eliminaArticolo("301FN")
 
