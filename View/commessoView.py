@@ -1,6 +1,7 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox
 from entities.operazione import Operazione
+from entities.operazione import Operazione, letturaDatabaseArticoli
 
 
 class FinestraC(QWidget):
@@ -75,11 +76,41 @@ class FinestraC(QWidget):
             a.setText('Ci sono dei campi vuoti')
             a.exec()
         else:
-            O = Operazione()
-            x = O.aggiungiVendita(self.sku_av.text(), self.numero_av.text(), self.paese_av.text())
+            lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+            n = 0
+            for art in lista_articoli:
+                if art['sku'] == SKU_AV:
+                    n += 1
+            if n == 1:
+                O = Operazione()
+                x = O.aggiungiVendita(self.sku_av.text(), self.numero_av.text(), self.paese_av.text())
+            else:
+                o = QMessageBox()
+                o.setWindowTitle('ERRORE')
+                o.setText('SKU NON ESISTENTE')
+                o.exec()
 
     def modifica_v_(self):
-        #SKU_MV = str(self.sku_mv.text())
+        SKU_MV = str(self.sku_mv.text())
+        lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+        n = 0
+        for art in lista_articoli:
+            if art['sku'] == SKU_MV:
+                n += 1
+        if n==1:
+            OpP = Operazione()
+            t = OpP.modificaVendita(int(self.id_Vendita.text()), str(self.sku_mv.text()), str(self.numero_mv.text()),str(self.paese_mv.text()))
+            if t == True:
+                y = QMessageBox()
+                y.setWindowTitle('ERRORE')
+                y.setText("L'operazione selezionata non è una vendita")
+                y.exec()
+        else :
+            p = QMessageBox()
+            p.setWindowTitle('ERRORE')
+            p.setText("L'operazione selezionata non è una vendita")
+            p.exec()
+
         #N_MV = int(self.numero_mv.text())
         #P_MV = str(self.paese_mv.text())
         #ID_VENDITA = int(self.id_Vendita.text())
@@ -92,5 +123,10 @@ class FinestraC(QWidget):
         #if ID_VENDITA == '':
          #   ID_VENDITA = None
         OpP = Operazione()
-        OpP.modificaVendita(int(self.id_Vendita.text()), str(self.sku_mv.text()), str(self.numero_mv.text()) ,str(self.paese_mv.text()))
+        t = OpP.modificaVendita(int(self.id_Vendita.text()), str(self.sku_mv.text()), str(self.numero_mv.text()) ,str(self.paese_mv.text()))
+        if t == True:
+            y = QMessageBox()
+            y.setWindowTitle('ERRORE')
+            y.setText("L'operazione selezionata non è una vendita")
+            y.exec()
 

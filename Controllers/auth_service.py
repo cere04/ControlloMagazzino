@@ -49,18 +49,21 @@ class AuthService:
 
     def aggiungiUtenti(self,nome, cognome, ruolo ) -> bool:
         """Aggiunge un nuovo utente al sistema"""
-        with open ("Model/databaseUtenti.txt", "r") as  file1:
-            n = 1
-            for riga in file1 :
-                n +=1
-                if not riga:
-                    continue
+        if nome == '' or cognome == '':
+            return  True
+        else:
+            with open ("Model/databaseUtenti.txt", "r") as  file1:
+                n = 1
+                for riga in file1 :
+                    n +=1
+                    if not riga:
+                        continue
 
-        cu = nome[0] + '.' + cognome + str(n) + ruolo[0]
-        #print(cu)
-        with open ("Model/databaseUtenti.txt", "a") as file:
-            file.write(f"\n{nome}, {cognome}, {ruolo}, {cu}")
-        return cu
+            cu = nome[0] + '.' + cognome + str(n) + ruolo[0]
+            #print(cu)
+            with open ("Model/databaseUtenti.txt", "a") as file:
+                file.write(f"\n{nome}, {cognome}, {ruolo}, {cu}")
+                return cu
 
 
 
@@ -70,3 +73,6 @@ class AuthService:
 #utente=AuthService()
 #prova=utente.loginUtente("m.rossi1M")
 #print(prova)
+#a = AuthService()
+#a.aggiungiUtenti('', 'hhhh', 'Magazziniere' )
+#print(a.aggiungiUtenti('', 'hhhh', 'Magazziniere'))

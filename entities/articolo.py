@@ -76,8 +76,8 @@ class Articolo:
 
 
 #test metodi
-articolo = Articolo()
+#articolo = Articolo()
 # articolo.aggiungiArticolo()
 # articolo.modificaArticolo("687YP", "donna", "borsa")
-articolo.eliminaArticolo("301FN")
+#articolo.eliminaArticolo("301FN")
 

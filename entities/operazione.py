@@ -206,7 +206,7 @@ class Operazione:
         if not operazione_giacenza_trovata:
             raise ValueError(f"ID operazione {id_set} non trovato")
         if operazione_giacenza_trovata == True and errore_tipo_op == False:
-            print("l'operazione cercata è una vendita, non una giacenza")
+            return True
 
 
 
@@ -258,7 +258,7 @@ class Operazione:
         if not operazione_trovata:
             raise ValueError(f"ID operazione {id_set} non trovato")
         if operazione_trovata == True and tipo_op == False :
-            print("L'operazione cercata è una giacenza, non è una vendita")
+            return True
 
 
 

@@ -68,11 +68,17 @@ class FinestraR(QWidget):
         #ruolo = self.label3.currentText()
         b = AuthService()
         f = b.aggiungiUtenti(self.Label1.text(), self.Label2.text(), self.label3.currentText())
-        a = QMessageBox()
-        a.setWindowTitle('Nome Utente')
-        a.setText('Registrazione avvenuta con successo \nIl tuo nome Utente è:'+ f )
-        a.exec()
-        self.hide()
+        if f == True:
+            d = QMessageBox()
+            d.setWindowTitle('ERRORE')
+            d.setText('Uno dei campi è vuoto, bisogna compilarli tutti per il rilascio del nome utente')
+            d.exec()
+        else :
+            a = QMessageBox()
+            a.setWindowTitle('Nome Utente')
+            a.setText('Registrazione avvenuta con successo \nIl tuo nome Utente è:'+ f )
+            a.exec()
+            self.hide()
         #self.finestra_1 = Finestra1()
-        self.loginView.show()
+            self.loginView.show()
 

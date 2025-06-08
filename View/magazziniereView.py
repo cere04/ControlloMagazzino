@@ -1,6 +1,6 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel
-from entities.operazione import Operazione
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox
+from entities.operazione import Operazione, letturaDatabaseArticoli
 
 
 class FinestraM(QWidget):
@@ -15,10 +15,13 @@ class FinestraM(QWidget):
         layoutH4 = QHBoxLayout()
         layoutH5 = QHBoxLayout()
         layoutH6 = QHBoxLayout()
+
         self.numero_ag = QLineEdit()
         self.numero_ag.setMaximumWidth(100)
+
         self.sku_ag = QLineEdit()
         self.sku_ag.setMaximumWidth(100)
+
         self.id_Giacenza = QLineEdit()
         self.id_Giacenza.setMaximumWidth(100)
 
@@ -66,13 +69,40 @@ class FinestraM(QWidget):
 
         self.setLayout(layoutM)
     def aggiunta(self):
-        O = Operazione()
-        x = O.aggiungiGiacenza(self.sku_ag.text(), self.numero_ag.text())
+        SKU_AG = self.sku_ag.text()
+        N_AG = self.numero_ag.text()
+
+
+        if SKU_AG == '' or N_AG == '':
+            a = QMessageBox()
+            a.setWindowTitle('ERRORE')
+            a.setText('Ci sono dei campi vuoti')
+            a.exec()
+        else:
+            lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+            n = 0
+            for art in lista_articoli:
+                if art['sku']==SKU_AG:
+                    n += 1
+            if n == 1:
+                O = Operazione()
+                O.aggiungiGiacenza(self.sku_ag.text(), self.numero_ag.text())
+            else:
+                o = QMessageBox()
+                o.setWindowTitle('ERRORE')
+                o.setText('SKU NON ESISTENTE')
+                o.exec()
 
 
     def modifica_(self):
+
         Opp = Operazione()
-        Opp.modificaGiacenza(int(self.id_Giacenza.text()), str(self.sku_mg.text()), str(self.numero_mg.text()),None)
+        k = Opp.modificaGiacenza(int(self.id_Giacenza.text()), str(self.sku_mg.text()), str(self.numero_mg.text()),None)
+        if k == True:
+            p = QMessageBox()
+            p.setWindowTitle('ERRORE')
+            p.setText("L'operazione selezionata non è una giacenza")
+            p.exec()
         #oppp = Operazione()
         #iD = int(self.id_Giacenza.text())
         #sKu = str(self.sku_mg.text())
