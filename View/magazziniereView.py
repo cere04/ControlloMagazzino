@@ -95,14 +95,32 @@ class FinestraM(QWidget):
 
 
     def modifica_(self):
+        SKU_MG = self.sku_mg.text()
+        lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+        n = 0
+        for art in lista_articoli:
+            if art['sku'] == SKU_MG:
+                n += 1
+        if n ==1:
+            Opp = Operazione()
+            k = Opp.modificaGiacenza(int(self.id_Giacenza.text()), str(self.sku_mg.text()), str(self.numero_mg.text()),None)
+            if k == True:
+                p = QMessageBox()
+                p.setWindowTitle('ERRORE')
+                p.setText("L'operazione selezionata non è una giacenza")
+                p.exec()
+            elif k == 'Errore':
+                u = QMessageBox()
+                u.setWindowTitle('ERRORE')
+                u.setText("L'operazione non esiste")
+                u.exec()
+        else :
+            w = QMessageBox()
+            w.setWindowTitle('ERRORE')
+            w.setText("SKU non esiste ")
+            w.exec()
 
-        Opp = Operazione()
-        k = Opp.modificaGiacenza(int(self.id_Giacenza.text()), str(self.sku_mg.text()), str(self.numero_mg.text()),None)
-        if k == True:
-            p = QMessageBox()
-            p.setWindowTitle('ERRORE')
-            p.setText("L'operazione selezionata non è una giacenza")
-            p.exec()
+
         #oppp = Operazione()
         #iD = int(self.id_Giacenza.text())
         #sKu = str(self.sku_mg.text())

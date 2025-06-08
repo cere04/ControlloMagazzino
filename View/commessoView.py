@@ -103,12 +103,17 @@ class FinestraC(QWidget):
             if t == True:
                 y = QMessageBox()
                 y.setWindowTitle('ERRORE')
-                y.setText("L'operazione selezionata non è una vendita")
+                y.setText("L'operazione cercata non è una vendita")
                 y.exec()
+            if t == 'non trovato':
+                l = QMessageBox()
+                l.setWindowTitle('ERRORE')
+                l.setText("L'operazione non esiste")
+                l.exec()
         else :
             p = QMessageBox()
             p.setWindowTitle('ERRORE')
-            p.setText("L'operazione selezionata non è una vendita")
+            p.setText("SKU non esiste")
             p.exec()
 
         #N_MV = int(self.numero_mv.text())
