@@ -51,9 +51,10 @@ class Articolo:
         if not articolo_trovato:
             raise ValueError(f"SKU articolo {sku_set} non trovato")
 
-    def eliminaArticolo(self, sku_set):
-        lista_articoli=letturaDatabaseArticoli("../Model/databaseArticoli.txt")
-
+    def eliminaArticolo(self):
+        lista_articoli=letturaDatabaseArticoli("Model/databaseArticoli.txt")
+        lista_articoli_new=[]
+        sku_set=self.sku
         for art in lista_articoli:
             if art['sku'] == sku_set:
                 lista_articoli_new = [riga for riga in lista_articoli if sku_set not in riga['sku']]
@@ -68,7 +69,7 @@ class Articolo:
                 lines.append(line)
 
             try:
-                with open("../Model/databaseArticoli.txt", 'w') as file:
+                with open("Model/databaseArticoli.txt", 'w') as file:
                     file.write("\n".join(lines))
             except Exception as e:
                 raise RuntimeError(f"Errore salvataggio database: {str(e)}")

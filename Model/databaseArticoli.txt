@@ -98,3 +98,4 @@
 333PY, donna, calzatura
 435HD, uomo, abbigliamento
 149HK, donna, abbigliamento
+123AB, calzature, donna

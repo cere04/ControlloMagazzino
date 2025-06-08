@@ -214,12 +214,26 @@ class adminWindow(object):
         self.pushButton_6 = QtWidgets.QPushButton(parent=self.frame_2)
         self.pushButton_6.setObjectName("pushButton_6")
         self.formLayout.setWidget(17, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_6)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                            QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout.setItem(6, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem2)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                            QtWidgets.QSizePolicy.Policy.Minimum)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout.setItem(12, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem3)
+        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,QtWidgets.QSizePolicy.Policy.Minimum)
+        self.formLayout.setItem(18, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem4)
+        self.label_28 = QtWidgets.QLabel(parent=self.frame_2)
+        self.label_28.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.label_28.setObjectName("label_28")
+        self.formLayout.setWidget(19, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.label_28)
+        self.label_29 = QtWidgets.QLabel(parent=self.frame_2)
+        self.label_29.setObjectName("label_29")
+        self.formLayout.setWidget(20, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_29)
+        self.lineEdit_18 = QtWidgets.QLineEdit(parent=self.frame_2)
+        self.lineEdit_18.setObjectName("lineEdit_18")
+        self.formLayout.setWidget(20, QtWidgets.QFormLayout.ItemRole.FieldRole, self.lineEdit_18)
+        self.pushButton_7 = QtWidgets.QPushButton(parent=self.frame_2)
+        self.pushButton_7.setObjectName("pushButton_7")
+        self.pushButton_7.clicked.connect(self.eliminaArticolo)
+        self.formLayout.setWidget(21, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_7)
         self.gridLayout.addWidget(self.frame_2, 1, 3, 3, 1)
         self.line = QtWidgets.QFrame(parent=self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.Shape.HLine)
@@ -322,6 +336,9 @@ class adminWindow(object):
         self.label_25.setText(_translate("MainWindow", "Genere"))
         self.label_26.setText(_translate("MainWindow", "Tipologia"))
         self.label_27.setText(_translate("MainWindow", "SKU"))
+        self.label_28.setText(_translate("MainWindow", "Elimina Articolo"))
+        self.label_29.setText(_translate("MainWindow", "SKU"))
+        self.pushButton_7.setText(_translate("MainWindow", "Conferma Operazione"))
         self.menuControlloMagazzino.setTitle(_translate("MainWindow", "ControlloMagazzino"))
 
     def aggiuntaVendita(self):
@@ -352,6 +369,11 @@ class adminWindow(object):
 
         O.modificaVendita(id_set, sku_set, quantita, paese)
         print("Modifica apportata")
+
+    def eliminaArticolo(self):
+        A=Articolo(self.lineEdit_18.text())
+        x=A.eliminaArticolo()
+        print("Articolo Eliminato")
 
 
 class BarChartCanvas(FigureCanvas):
