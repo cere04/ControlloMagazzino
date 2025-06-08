@@ -1,65 +1,66 @@
 from Controllers.auth_service import AuthService
+from View.adminView import adminWindow
 from View.magazziniereView import FinestraM
 from View.commessoView import FinestraC
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QMessageBox
 from View.registrazioneView import FinestraR
 from View.responsabileView import FinestraRC
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QMessageBox, QMainWindow
+
 class Finestra1(QWidget):
     def __init__(self):
         super().__init__()
-        self.show()
         self.setWindowTitle("Finestra Iniziale")
         self.setGeometry(200, 200, 300, 200)
-        self.F1L = QVBoxLayout()
-        self.setLayout(self.F1L)
+        layout = QVBoxLayout(self)
+
         self.Inserimento = QLineEdit()
         self.Inserimento.setPlaceholderText("Codice Utente")
+        layout.addWidget(self.Inserimento)
+
         self.Accedi = QPushButton("Accedi")
-        self.Registrati = QPushButton("Registrati")
-        #self.Accedi.clicked.connect(self.afa)
-        self.Registrati.clicked.connect(self.finestraRegistrazione)
-        self.F1L.addWidget(self.Inserimento)
-        self.F1L.addWidget(self.Accedi)
+        layout.addWidget(self.Accedi)
         self.Accedi.clicked.connect(self.accesso)
-        self.F1L.addWidget(self.Registrati)
+
+        self.Registrati = QPushButton("Registrati")
+        layout.addWidget(self.Registrati)
+        self.Registrati.clicked.connect(self.finestraRegistrazione)
+
+        # tieni la finestra di registrazione viva, se serve
         self.finestra_r = FinestraR(self)
-        # self.finestraR = FinestraR()
-    def accesso (self) :
+
+    def finestraRegistrazione(self):
+        self.finestra_r.show()
+
+    def accesso(self):
+        codice = self.Inserimento.text().strip()
         A = AuthService()
-        x = A.loginUtente(self.Inserimento.text())
-        if x == None:
-            pp = QMessageBox()
-            pp.setWindowTitle('errore')
-            pp.setText("Nome utente non esistente, riprovare")
-            pp.exec()
-        # else:
-        #     print("ok")
-        elif x['ruoloUtente'] == 'Magazziniere':
-            self.hide()
+        user = A.loginUtente(codice)
+
+        if user is None:
+            QMessageBox.critical(self, "Errore", "Nome utente non esistente, riprovare")
+            return
+
+        ruolo = user.get('ruoloUtente')
+        self.hide()
+
+        if ruolo == 'Magazziniere':
             self.finestra_m = FinestraM()
             self.finestra_m.show()
-        elif x['ruoloUtente'] == 'Commesso':
-            self.hide()
+
+        elif ruolo == 'Commesso':
             self.finestra_c = FinestraC()
             self.finestra_c.show()
-        elif x['ruoloUtente'] == 'Responsabile Commerciale':
-            self.hide()
+
+        elif ruolo == 'Responsabile Commerciale':
             self.finestra_rc = FinestraRC()
             self.finestra_rc.show()
-        # elif x['ruoloUtente'] == 'Responsabile Commerciale':
-        #     self.hide()
-        #     self.finestra_ad = FinestraAD()
-        #     self.finestra_ad.show()
-        # self.hide()
-        # self.finestraA = FinestraA()
-        # self.finestraA.show()
-    def finestraRegistrazione (self) :
-        self.finestra_r.show()
-        self.hide()
-        #if self.finestraR.Registrazione() == True:
-            #print("ciao")
-            #self.show()
-            #self.finestraR.hide()
 
+        elif ruolo == 'Amministratore':
+            # **Qui** crei una QMainWindow e la “allestisci” con adminWindow.setupUi
+            self.finestra_a = QMainWindow()
+            self.ui_admin = adminWindow()
+            self.ui_admin.setupUi(self.finestra_a)
+            self.finestra_a.show()
 
-
+        else:
+            QMessageBox.warning(self, "Ruolo sconosciuto", f"Ruolo '{ruolo}' non gestito.")

@@ -204,13 +204,13 @@ def filtraOperazioni(lista_operazioni: List[Dict[str, any]],
     """
     filtrate = lista_operazioni
 
-    if sku:
+    if sku != "":
         filtrate = filtroSKU(filtrate, sku)
-    if generi:
+    if generi != "":
         filtrate = filtroGenere(filtrate, lista_articoli, generi)
-    if tipologie:
+    if tipologie != "":
         filtrate = filtroTipologia(filtrate, lista_articoli, tipologie)
-    if zone:
+    if zone != "":
         filtrate = filtroZona(filtrate, zone)
 
     return filtrate
@@ -221,7 +221,8 @@ def filtraOperazioni(lista_operazioni: List[Dict[str, any]],
 # lista_operazioni = letturaDatabaseOperazioni("../Model/databaseOperazioni.txt")
 # lista_articoli = letturaDatabaseArticoli("../Model/databaseArticoli.txt")
 #
-# dati_filtrati = filtraOperazioni(lista_operazioni ,lista_articoli , [], [], [])
+# dati_filtrati = filtraOperazioni(lista_operazioni ,lista_articoli , ["922WE"], [], [], [])
+# print(dati_filtrati)
 #
 # giacenza_media = [0] * 12
 #
