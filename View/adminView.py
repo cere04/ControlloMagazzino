@@ -263,6 +263,9 @@ class adminWindow(object):
         self.comboBox.setMinimumSize(QtCore.QSize(100, 0))
         self.comboBox.setMaximumSize(QtCore.QSize(100, 16777215))
         self.comboBox.setObjectName("comboBox")
+        self.comboBox.addItem(" ")
+        self.comboBox.addItem("uomo")
+        self.comboBox.addItem("donna")
         self.horizontalLayout.addWidget(self.comboBox)
         self.label_26 = QtWidgets.QLabel(parent=self.frame_3)
         self.label_26.setObjectName("label_26")
@@ -271,6 +274,10 @@ class adminWindow(object):
         self.comboBox_2.setMinimumSize(QtCore.QSize(100, 0))
         self.comboBox_2.setMaximumSize(QtCore.QSize(100, 16777215))
         self.comboBox_2.setObjectName("comboBox_2")
+        self.comboBox_2.addItem(" ")
+        self.comboBox_2.addItem("calzatura")
+        self.comboBox_2.addItem("borsa")
+        self.comboBox_2.addItem("abbigliamento")
         self.horizontalLayout.addWidget(self.comboBox_2)
         self.label_27 = QtWidgets.QLabel(parent=self.frame_3)
         self.label_27.setObjectName("label_27")
@@ -287,6 +294,12 @@ class adminWindow(object):
         self.comboBox_3.setMinimumSize(QtCore.QSize(100, 0))
         self.comboBox_3.setMaximumSize(QtCore.QSize(100, 16777215))
         self.comboBox_3.setObjectName("comboBox_3")
+
+        self.comboBox_3.addItem(" ")
+        self.comboBox_3.addItem("Italia")
+        self.comboBox_3.addItem("Germania")
+        self.comboBox_3.addItem("Francia")
+        self.comboBox_3.addItem("Spagna")
         self.horizontalLayout.addWidget(self.comboBox_3)
         self.pushButton_8 = QtWidgets.QPushButton(parent=self.frame_3)
         self.pushButton_8.setObjectName("pushButton_8")
@@ -376,10 +389,10 @@ class adminWindow(object):
 
         id_set:int=self.lineEdit_9.text()
         sku_set:str=self.lineEdit.text()
-        quantita:int=self.spinBox_3.value()
+        quantita:str=self.spinBox_3.value()
         paese:str=self.lineEdit_10.text()
 
-        O.modificaVendita(id_set, sku_set, quantita, paese)
+        O.modificaVendita(int(self.lineEdit_9.text()), str(self.lineEdit.text()), str(self.spinBox_3.value()), str(self.lineEdit_10.text()))
         print("Modifica apportata")
 
     def modificaGiacenza(self):
@@ -397,21 +410,18 @@ class adminWindow(object):
         print("Articolo Eliminato")
 
     def applicaFiltri(self):
-        print("ok")
-
-        # sku_set=[]
-        # genere_set=[]
-        # tipologia_set=[]
-        # paese_set=[]
-        #
-        self.lineEdit_17.text()
-        self.comboBox.currentText()
-        self.comboBox_2.currentText()
-        self.comboBox_3.currentText()
 
         lista_operazioni=letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         lista_articoli=letturaDatabaseArticoli("Model/databaseArticoli.txt")
-        operazioniFiltrate=operation_service.filtraOperazioni(lista_operazioni, lista_articoli, [self.lineEdit_17.text()], [self.comboBox.currentText()], [self.comboBox_2.currentText()], [self.comboBox_3.currentText()])
+        operazioniFiltrate = operation_service.filtraOperazioni(lista_operazioni, lista_articoli,
+                                                                [str(self.lineEdit_17.text())],
+                                                                [str(self.comboBox.currentText())],
+                                                                [str(self.comboBox_2.currentText())],
+                                                                [str(self.comboBox_3.currentText())])
+        #operazioniFiltrate=operation_service.filtraOperazioni(lista_operazioni, lista_articoli, [self.lineEdit_17.text()], [self.comboBox.currentText()], [self.comboBox_2.currentText()], [self.comboBox_3.currentText()])
+        #operazioniFiltrate = operation_service.filtraOperazioni(lista_operazioni, lista_articoli,[a],[b], [c], [d])
+
+
         print(operazioniFiltrate)
 
 

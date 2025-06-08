@@ -174,7 +174,7 @@ def filtroZona(lista_operazioni: List[Dict[str, any]], zone: List[str]) -> list[
         return lista_operazioni
 
     zone_set = set(zone)
-    return[op for op in lista_operazioni if op['paese'] in zone_set]
+    return[op for op in lista_operazioni if op['paese'] in zone_set or op['paese'] == "Brancadoro"]
 
 def filtraOperazioni(lista_operazioni: List[Dict[str, any]],
                      lista_articoli: List[Dict[str, Any]],
@@ -204,13 +204,13 @@ def filtraOperazioni(lista_operazioni: List[Dict[str, any]],
     """
     filtrate = lista_operazioni
 
-    if sku != "":
+    if sku != ['']:
         filtrate = filtroSKU(filtrate, sku)
-    if generi != "":
+    if generi != [' ']:
         filtrate = filtroGenere(filtrate, lista_articoli, generi)
-    if tipologie != "":
+    if tipologie != [' ']:
         filtrate = filtroTipologia(filtrate, lista_articoli, tipologie)
-    if zone != "":
+    if zone != [' ']:
         filtrate = filtroZona(filtrate, zone)
 
     return filtrate

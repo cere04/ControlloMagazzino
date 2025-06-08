@@ -96,12 +96,13 @@ class FinestraM(QWidget):
 
     def modifica_(self):
         SKU_MG = self.sku_mg.text()
+
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
-        n = 0
+        n = False
         for art in lista_articoli:
-            if art['sku'] == SKU_MG:
-                n += 1
-        if n ==1:
+            if art['sku'] == SKU_MG or SKU_MG == '':
+                n = True
+        if n is True:
             Opp = Operazione()
             k = Opp.modificaGiacenza(int(self.id_Giacenza.text()), str(self.sku_mg.text()), str(self.numero_mg.text()),None)
             if k == True:
