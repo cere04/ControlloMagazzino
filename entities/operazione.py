@@ -259,15 +259,3 @@ class Operazione:
             return 'non trovato'
         if operazione_trovata == True and tipo_op == False :
             return True
-
-
-
-
-
-# test metodi
-
-#operazione = Operazione()
-#operazione.modificaVendita(2, '','', '')
-# operazione.modificaGiacenza(437, "922WE", 51, "Italia", None)
-# operazione.aggiungiGiacenza("922WE", 15)
-# operazione.aggiungiVendita("922WE", 50, "Germania")

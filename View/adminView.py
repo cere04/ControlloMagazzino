@@ -454,10 +454,6 @@ class adminWindow(object):
                                                                 [str(self.comboBox.currentText())],
                                                                 [str(self.comboBox_2.currentText())],
                                                                 [str(self.comboBox_3.currentText())])
-        #operazioniFiltrate=operation_service.filtraOperazioni(lista_operazioni, lista_articoli, [self.lineEdit_17.text()], [self.comboBox.currentText()], [self.comboBox_2.currentText()], [self.comboBox_3.currentText()])
-        #operazioniFiltrate = operation_service.filtraOperazioni(lista_operazioni, lista_articoli,[a],[b], [c], [d])
-
-
         print(operazioniFiltrate)
 
 
@@ -465,8 +461,7 @@ class BarChartCanvas(FigureCanvas):
     def __init__(self, parent=None):
         self.fig = Figure(figsize=(10, 4), tight_layout=True)
         self.axes = self.fig.add_subplot(111)
-        # CORREZIONE: Chiamata corretta al costruttore della superclasse
-        super().__init__(self.fig)  # <--- Correzione qui (rimosso il parent)
+        super().__init__(self.fig)
 
         if parent:
             self.setParent(parent)  # Imposta il parent separatamente

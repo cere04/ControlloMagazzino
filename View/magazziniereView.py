@@ -120,10 +120,3 @@ class FinestraM(QWidget):
             w.setWindowTitle('ERRORE')
             w.setText("SKU non esiste ")
             w.exec()
-
-
-        #oppp = Operazione()
-        #iD = int(self.id_Giacenza.text())
-        #sKu = str(self.sku_mg.text())
-        #nuM = int(self.numero_mg.text())
-        #oppp.modificaGiacenza(iD, sKu, nuM, None)

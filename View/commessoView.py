@@ -116,17 +116,7 @@ class FinestraC(QWidget):
             p.setText("SKU non esiste")
             p.exec()
 
-        #N_MV = int(self.numero_mv.text())
-        #P_MV = str(self.paese_mv.text())
-        #ID_VENDITA = int(self.id_Vendita.text())
-        #if SKU_MV == '':
-        #    SKU_MV = None
-        #if N_MV == '':
-         #   N_MV = None
-        #if P_MV == '':
-         #   P_MV = None
-        #if ID_VENDITA == '':
-         #   ID_VENDITA = None
+
         OpP = Operazione()
         t = OpP.modificaVendita(int(self.id_Vendita.text()), str(self.sku_mv.text()), str(self.numero_mv.text()) ,str(self.paese_mv.text()))
         if t == True:

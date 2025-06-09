@@ -17,7 +17,6 @@ class Articolo:
 
         lista_articoli=letturaDatabaseArticoli("Model/databaseArticoli.txt")
 
-        # if self.sku is in lista_articoli['sku']:
         controllo_sku=False
 
         for riga in lista_articoli:
@@ -89,12 +88,3 @@ class Articolo:
                     file.write("\n".join(lines))
             except Exception as e:
                 raise RuntimeError(f"Errore salvataggio database: {str(e)}")
-
-
-
-#test metodi
-#articolo = Articolo()
-# articolo.aggiungiArticolo()
-# articolo.modificaArticolo("687YP", "donna", "borsa")
-#articolo.eliminaArticolo("301FN")
-

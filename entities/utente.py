@@ -2,7 +2,6 @@ from entities.enums import RuoloUtente
 from abc import abstractmethod, ABC
 from typing import List, Dict, Any
 
-# from .operazione import letturaDatabaseArticoli
 
 def letturaDatabaseUtenti(nome_file: str)-> List[Dict[str, str]]:
 
@@ -39,32 +38,6 @@ def get_utente_by_id(id: str, lista_utenti: List[Dict[str, Any]]) -> dict[str, A
             return utente
     return None
 
-
-
-
-
-
-
-    # def bottoneCliccato (self) :
-    #     nome = self.Label1.text()
-    #     cognome = self.Label2.text()
-    #     ruolo = self.label3.currentText()
-    # #NCR  = [nome , cognome , ruolo]
-    # #LDA = PW.text()
-    # print(nome + ' ' + cognome + ' ' + ruolo)
-    # with open ("FilePassword.txt", "r") as  file1:
-    #     n = 0
-    #     for riga in file1 :
-    #         ID = riga.split( )
-    #         if nome == ID[0] and cognome == ID[1] and ruolo == ID[2]:
-    #             n +=1
-    # CU = nome[0:3] + cognome[0:3] + ruolo[0] + str(n)
-    # print(CU)
-    # with open ("File_ID.txt", "a") as file2:
-    #     file2.write(f"\n{CU}")
-    # with open ( "FilePassword.txt", "a") as file:
-    #     file.write(f"\n{nome } {cognome } {ruolo}")
-
 class Utente(ABC):
     def __init__(self,
                  nome: str,
@@ -99,20 +72,6 @@ class ResponsabileCommerciale(Utente):
                  ):
         super().__init__(nome, cognome, codiceDipendente, RuoloUtente.RESPONSABILE_COMMERCIALE)
 
-
-# -------------------------------------------------------------------------------------------------
-# chiedere se serve inserire la generalizzazione anche sull'implementazione per questa sottoclasse
-# -------------------------------------------------------------------------------------------------
-
-
-# class Operatore(Utente):
-#     def __init__(self,
-#                  nome:str,
-#                  cognome:str,
-#                  codiceDipendente:str
-#                  ):
-#         super().__init__(nome, cognome, codiceDipendente, RuoloUtente.OPERATORE)
-
 class Commesso(Utente):
     def __init__(self,
                  nome:str,
@@ -128,15 +87,4 @@ class Magazziniere(Utente):
                  codiceDipendente:str
                  ):
         super().__init__(nome, cognome, codiceDipendente, RuoloUtente.MAGAZZINIERE)
-
-
-#test metodi
-
-# lista_utenti=letturaDatabaseUtenti("Model/databaseUtenti.txt")
-# print(lista_utenti)
-
-
-
-
-
 

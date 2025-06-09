@@ -25,7 +25,6 @@ class Finestra1(QWidget):
         layout.addWidget(self.Registrati)
         self.Registrati.clicked.connect(self.finestraRegistrazione)
 
-        # tieni la finestra di registrazione viva, se serve
         self.finestra_r = FinestraR(self)
 
     def finestraRegistrazione(self):
@@ -56,7 +55,6 @@ class Finestra1(QWidget):
             self.finestra_rc.show()
 
         elif ruolo == 'Amministratore':
-            # **Qui** crei una QMainWindow e la “allestisci” con adminWindow.setupUi
             self.finestra_a = QMainWindow()
             self.ui_admin = adminWindow()
             self.ui_admin.setupUi(self.finestra_a)
