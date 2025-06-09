@@ -371,18 +371,83 @@ class adminWindow(object):
         self.menuControlloMagazzino.setTitle(_translate("MainWindow", "ControlloMagazzino"))
 
     def aggiuntaVendita(self):
-        O=Operazione()
-        x = O.aggiungiVendita(self.lineEdit_5.text(),self.spinBox.value(), self.lineEdit_7.text())
-        print("Vendita aggiunta")
+        # O=Operazione()
+        # x = O.aggiungiVendita(self.lineEdit_5.text(),self.spinBox.value(), self.lineEdit_7.text())
+        # print("Vendita aggiunta")
+
+        SKU_AV = self.lineEdit_5.text()
+        N_AV = self.spinBox.value()
+        P_AV = self.lineEdit_7.text()
+        if SKU_AV == '' or N_AV == '' or P_AV == '':
+            a = QMessageBox()
+            a.setWindowTitle('ERRORE')
+            a.setText('Ci sono dei campi vuoti')
+            a.exec()
+        else:
+            lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+            n = 0
+            for art in lista_articoli:
+                if art['sku'] == SKU_AV:
+                    n += 1
+            if n == 1:
+                O = Operazione()
+                x = O.aggiungiVendita(SKU_AV, N_AV, P_AV)
+            else:
+                o = QMessageBox()
+                o.setWindowTitle('ERRORE')
+                o.setText('SKU NON ESISTENTE')
+                o.exec()
 
     def aggiuntaGiacenza(self):
-        O=Operazione()
-        x = O.aggiungiGiacenza(self.lineEdit_3.text(), self.spinBox_2.value())
-        print("Giacenza aggiunta")
+        # O=Operazione()
+        # x = O.aggiungiGiacenza(self.lineEdit_3.text(), self.spinBox_2.value())
+        # print("Giacenza aggiunta")
+
+        SKU_AG = self.lineEdit_3.text()
+        N_AG = self.spinBox_2.value()
+
+        if SKU_AG == '' or N_AG == '':
+            a = QMessageBox()
+            a.setWindowTitle('ERRORE')
+            a.setText('Ci sono dei campi vuoti')
+            a.exec()
+        else:
+            lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+            n = 0
+            for art in lista_articoli:
+                if art['sku'] == SKU_AG:
+                    n += 1
+            if n == 1:
+                O = Operazione()
+                O.aggiungiGiacenza(SKU_AG, N_AG)
+            else:
+                o = QMessageBox()
+                o.setWindowTitle('ERRORE')
+                o.setText('SKU NON ESISTENTE')
+                o.exec()
 
     def aggiuntaArticolo(self):
-        A=Articolo(self.lineEdit_4.text(), self.lineEdit_6.text(), self.lineEdit_8.text())
-        x = A.aggiungiArticolo()
+        SKU_ART = self.lineEdit_4.text()
+        GENERE_ART = self.lineEdit_6.text()
+        TIPO_ART=self.lineEdit_8.text()
+
+        if SKU_ART == '' or TIPO_ART == '' or GENERE_ART == '':
+            QMessageBox.critical(None,'Errore','Ci sono dei campi vuoti')
+            return
+        if str(GENERE_ART) != "uomo" and str(GENERE_ART) != 'donna':
+            QMessageBox.critical(None,'Errore','Genere non valido, deve essere uomo o donna')
+            return
+        else:
+            lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+            n = 0
+            for art in lista_articoli:
+                if art['sku']==SKU_ART:
+                    n += 1
+            if n == 0:
+                A = Articolo(self.lineEdit_4.text(), self.lineEdit_6.text(), self.lineEdit_8.text())
+                x = A.aggiungiArticolo()
+            else:
+                QMessageBox.critical(None,'Errore','SKU ESISTENTE')
 
     def modificaVendita(self):
 

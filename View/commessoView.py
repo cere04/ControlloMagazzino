@@ -43,7 +43,7 @@ class FinestraC(QWidget):
 
         layoutM.addWidget(aggiungi)
 
-        layoutH6.addWidget(QLabel('MODIFICA GIACENZA'))
+        layoutH6.addWidget(QLabel('MODIFICA VENDITA'))
         layoutH6.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layoutM.addLayout(layoutH6)
 
