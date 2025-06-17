@@ -1,80 +1,121 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox
-from entities.operazione import Operazione
+from PyQt6.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel,
+    QMessageBox, QGroupBox, QFormLayout
+)
 from entities.operazione import Operazione, letturaDatabaseArticoli
-
 
 class FinestraC(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Finestra dei Commessi")
-        self.setGeometry(200, 200, 300, 200)
-        layoutM = QVBoxLayout()
-        layoutH1 = QHBoxLayout()
-        layoutH3 = QHBoxLayout()
-        layoutH5 = QHBoxLayout()
-        layoutH6 = QHBoxLayout()
+        self.setGeometry(200, 200, 700, 300)
 
-        self.numero_av = QLineEdit()
+        layoutMain = QHBoxLayout()
+
+        # ---------- SEZIONE NUOVA VENDITA ----------
+        nuovaVenditaBox = QGroupBox("Nuova Vendita")
+        nuovaVenditaLayout = QFormLayout()
+
         self.sku_av = QLineEdit()
+        self.sku_av.setPlaceholderText("Inserisci SKU")
+        self.numero_av = QLineEdit()
+        self.numero_av.setPlaceholderText("Inserisci Quantità")
         self.paese_av = QLineEdit()
+        self.paese_av.setPlaceholderText("Inserisci Paese")
 
-        self.numero_mv = QLineEdit()
-        self.sku_mv = QLineEdit()
+        nuovaVenditaLayout.addRow("SKU:", self.sku_av)
+        nuovaVenditaLayout.addRow("Quantità:", self.numero_av)
+        nuovaVenditaLayout.addRow("Paese:", self.paese_av)
+
+        btn_aggiungi = QPushButton("Aggiungi")
+        btn_aggiungi.clicked.connect(self.aggiunta)
+        nuovaVenditaLayout.addWidget(btn_aggiungi)
+
+        nuovaVenditaBox.setLayout(nuovaVenditaLayout)
+        layoutMain.addWidget(nuovaVenditaBox)
+
+        # ---------- SEZIONE MODIFICA VENDITA ----------
+        modificaVenditaBox = QGroupBox("Modifica Vendita")
+        modificaVenditaLayout = QFormLayout()
+
         self.id_Vendita = QLineEdit()
+        self.id_Vendita.setPlaceholderText("ID Vendita")
+        self.sku_mv = QLineEdit()
+        self.sku_mv.setPlaceholderText("SKU")
+        self.numero_mv = QLineEdit()
+        self.numero_mv.setPlaceholderText("Quantità")
         self.paese_mv = QLineEdit()
+        self.paese_mv.setPlaceholderText("Paese")
 
-        aggiungi = QPushButton("Aggiungi")
-        aggiungi.clicked.connect(self.aggiunta)
-        modifica_v = QPushButton("Modifica")
-        modifica_v.clicked.connect(self.modifica_v_)
+        modificaVenditaLayout.addRow("ID Vendita:", self.id_Vendita)
+        modificaVenditaLayout.addRow("SKU:", self.sku_mv)
+        modificaVenditaLayout.addRow("Quantità:", self.numero_mv)
+        modificaVenditaLayout.addRow("Paese:", self.paese_mv)
 
-        layoutH5.addWidget(QLabel('NUOVA VENDITA'))
-        layoutH5.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layoutM.addLayout(layoutH5)
+        btn_modifica = QPushButton("Modifica")
+        btn_modifica.clicked.connect(self.modifica_v_)
+        modificaVenditaLayout.addWidget(btn_modifica)
 
-        layoutH1.addWidget(QLabel('SKU:'))
-        layoutH1.addWidget(self.sku_av)
-        layoutH1.addWidget(QLabel('QUANTITÀ:'))
-        layoutH1.addWidget(self.numero_av)
-        layoutH1.addWidget(QLabel('PAESE:'))
-        layoutH1.addWidget(self.paese_av)
-        layoutM.addLayout(layoutH1)
+        modificaVenditaBox.setLayout(modificaVenditaLayout)
+        layoutMain.addWidget(modificaVenditaBox)
 
-        layoutM.addWidget(aggiungi)
+        self.setLayout(layoutMain)
 
-        layoutH6.addWidget(QLabel('MODIFICA VENDITA'))
-        layoutH6.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layoutM.addLayout(layoutH6)
-
-        layoutH3.addWidget(QLabel('ID VENDITA:'))
-        layoutH3.addWidget(self.id_Vendita)
-
-        layoutH3.addWidget(QLabel('SKU:'))
-        layoutH3.addWidget(self.sku_mv)
-
-        layoutH3.addWidget(QLabel('QUANTITÀ:'))
-        layoutH3.addWidget(self.numero_mv)
-
-        layoutH3.addWidget(QLabel('PAESE:'))
-        layoutH3.addWidget(self.paese_mv)
-
-        layoutM.addLayout(layoutH3)
-
-        layoutM.addWidget(modifica_v)
-        layoutM.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.setLayout(layoutM)
+        # ---------- STILE ----------
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #ffffff;
+                font-family: Arial, sans-serif;
+                color: #000000;
+            }
+            QGroupBox {
+                border: 2px solid #0F4C81;
+                border-radius: 8px;
+                margin-top: 10px;
+                padding: 10px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 5px;
+                color: #0F4C81;
+                font-weight: bold;
+                font-size: 16px;
+            }
+            QLineEdit {
+                padding: 8px;
+                border: 2px solid #cccccc;
+                border-radius: 8px;
+                font-size: 14px;
+                color: black;
+            }
+            QLineEdit:focus {
+                border: 2px solid #3A81F1;
+            }
+            QPushButton {
+                padding: 10px;
+                background-color: #0F4C81;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #1666AA;
+            }
+            QPushButton:pressed {
+                background-color: #0C3C66;
+            }
+        """)
 
     def aggiunta(self):
         SKU_AV = self.sku_av.text()
         N_AV = self.numero_av.text()
         P_AV = self.paese_av.text()
+
         if SKU_AV == '' or N_AV == '' or P_AV == '':
-            a = QMessageBox()
-            a.setWindowTitle('ERRORE')
-            a.setText('Ci sono dei campi vuoti')
-            a.exec()
+            QMessageBox.critical(self, 'ERRORE', 'Ci sono dei campi vuoti')
         else:
             lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
             n = 0
@@ -83,45 +124,30 @@ class FinestraC(QWidget):
                     n += 1
             if n == 1:
                 O = Operazione()
-                x = O.aggiungiVendita(self.sku_av.text(), self.numero_av.text(), self.paese_av.text())
+                O.aggiungiVendita(SKU_AV, N_AV, P_AV)
             else:
-                o = QMessageBox()
-                o.setWindowTitle('ERRORE')
-                o.setText('SKU NON ESISTENTE')
-                o.exec()
+                QMessageBox.critical(self, 'ERRORE', 'SKU NON ESISTENTE')
 
     def modifica_v_(self):
-        SKU_MV = str(self.sku_mv.text())
+        SKU_MV = self.sku_mv.text()
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         n = False
         for art in lista_articoli:
             if art['sku'] == SKU_MV or SKU_MV == '':
                 n = True
-        if n is True:
+        if n:
+            try:
+                id_vendita = int(self.id_Vendita.text())
+            except ValueError:
+                QMessageBox.critical(self, 'ERRORE', 'ID non valido')
+                return
+
             OpP = Operazione()
-            t = OpP.modificaVendita(int(self.id_Vendita.text()), str(self.sku_mv.text()), str(self.numero_mv.text()),str(self.paese_mv.text()))
-            if t == True:
-                y = QMessageBox()
-                y.setWindowTitle('ERRORE')
-                y.setText("L'operazione cercata non è una vendita")
-                y.exec()
-            if t == 'non trovato':
-                l = QMessageBox()
-                l.setWindowTitle('ERRORE')
-                l.setText("L'operazione non esiste")
-                l.exec()
-        else :
-            p = QMessageBox()
-            p.setWindowTitle('ERRORE')
-            p.setText("SKU non esiste")
-            p.exec()
+            risultato = OpP.modificaVendita(id_vendita, SKU_MV, self.numero_mv.text(), self.paese_mv.text())
 
-
-        OpP = Operazione()
-        t = OpP.modificaVendita(int(self.id_Vendita.text()), str(self.sku_mv.text()), str(self.numero_mv.text()) ,str(self.paese_mv.text()))
-        if t == True:
-            y = QMessageBox()
-            y.setWindowTitle('ERRORE')
-            y.setText("L'operazione selezionata non è una vendita")
-            y.exec()
-
+            if risultato is True:
+                QMessageBox.critical(self, 'ERRORE', "L'operazione selezionata non è una vendita")
+            elif risultato == 'non trovato':
+                QMessageBox.critical(self, 'ERRORE', "L'operazione non esiste")
+        else:
+            QMessageBox.critical(self, 'ERRORE', "SKU non esiste")

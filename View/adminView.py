@@ -18,11 +18,131 @@ from Controllers.operation_service import calcolaVenditeTotali, ordinamentoOpera
     indiceRotazione
 from entities.operazione import letturaDatabaseOperazioni
 
+STYLESHEET = """
+    /* Main window and general styling */
+    QWidget {
+        background-color: #ffffff;
+        font-family: Arial, sans-serif;
+        color: #000000;
+    }
+    
+    QMainWindow {
+        background-color: #f5f7fa;
+    }
+    
+    QLabel {
+        color: #2d3748;
+    }
+    
+    QLabel[objectName^="label_"] {
+        font-weight: 600;
+    }
+    
+    /* Section header labels */
+    QLabel[objectName="label_9"],
+    QLabel[objectName="label_8"],
+    QLabel[objectName="label_10"],
+    QLabel[objectName="label"],
+    QLabel[objectName="label_17"],
+    QLabel[objectName="label_21"],
+    QLabel[objectName="label_28"] {
+        font-size: 16px;
+        font-weight: 700;
+        color: #4a5568;
+        padding-bottom: 8px;
+    }
+    
+    /* Input fields */
+    QLineEdit {
+        padding: 8px;
+        border: 2px solid #cccccc;
+        border-radius: 8px;
+        font-size: 14px;
+        color: black;
+    }
+    QLineEdit:focus {
+        border: 2px solid #3A81F1;
+    }
+    
+    /* ComboBox styling */
+    QComboBox {
+        padding: 8px;
+        border: 2px solid #cccccc;
+        border-radius: 8px;
+        font-size: 14px;
+        color: black;
+    }
+
+    QComboBox:focus {
+        border: 2px solid #3A81F1;
+    }
+    QComboBox QAbstractItemView {
+        border: 2px solid #cccccc;
+        border-radius: 8px;
+        padding: 8px;
+        background: white;
+        selection-background-color: #0F4C81;
+        selection-color: white;
+    }
+    
+    /* SpinBox styling */
+    QSpinBox {
+        padding: 8px;
+        border: 2px solid #cccccc;
+        border-radius: 8px;
+        font-size: 14px;
+        color: black;
+        padding-right: 25px; /* Space for buttons */
+    }
+    
+    QSpinBox:focus {
+        border: 2px solid #3A81F1;
+    }
+    
+    /* Button styling */
+    QPushButton {
+        padding: 10px;
+        background-color: #0F4C81;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+    QPushButton:hover {
+        background-color: #1666AA;
+    }
+    QPushButton:pressed {
+        background-color: #0C3C66;
+    }
+    
+    BarChartCanvas {
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid #e0e6ed;
+        padding: 16px;
+    }
+    
+    /* Filter bar */
+    QFrame#frame_3 {
+        background-color: white;
+        border-radius: 8px;
+        border: 1px solid #e0e6ed;
+        padding: 12px;
+    }
+    
+    /* Horizontal line separator */
+    QFrame[objectName="line"] {
+        color: #e2e8f0;
+    }
+"""
 
 class adminWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1193, 893)
+
+        # MainWindow.setStyleSheet(STYLESHEET)
+
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -215,6 +335,7 @@ class adminWindow(object):
         self.formLayout.setWidget(11, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_5)
         self.pushButton_6 = QtWidgets.QPushButton(parent=self.frame_2)
         self.pushButton_6.setObjectName("pushButton_6")
+        self.pushButton_6.clicked.connect(self.modificaArticolo)
         self.formLayout.setWidget(17, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_6)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout.setItem(6, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem2)
@@ -359,7 +480,7 @@ class adminWindow(object):
         self.label_24.setText(_translate("MainWindow", "Tipologia"))
         self.pushButton_4.setText(_translate("MainWindow", "PushButton"))
         self.pushButton_5.setText(_translate("MainWindow", "PushButton"))
-        self.pushButton_6.setText(_translate("MainWindow", "PushButton"))
+        self.pushButton_6.setText(_translate("MainWindow", "Modifica"))
         self.label_25.setText(_translate("MainWindow", "Genere"))
         self.label_26.setText(_translate("MainWindow", "Tipologia"))
         self.label_27.setText(_translate("MainWindow", "SKU"))
@@ -399,9 +520,6 @@ class adminWindow(object):
                 o.exec()
 
     def aggiuntaGiacenza(self):
-        # O=Operazione()
-        # x = O.aggiungiGiacenza(self.lineEdit_3.text(), self.spinBox_2.value())
-        # print("Giacenza aggiunta")
 
         SKU_AG = self.lineEdit_3.text()
         N_AG = self.spinBox_2.value()
@@ -505,10 +623,55 @@ class adminWindow(object):
             w.setText("SKU non esiste ")
             w.exec()
 
+    def modificaArticolo(self):
+
+        SKU_ART = str(self.lineEdit_14.text())
+        GENERE_SKU = str(self.lineEdit_15.text())
+        TIPO_ART = str(self.lineEdit_16.text())
+        lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+        n = False
+        for art in lista_articoli:
+            if art['sku'] == SKU_ART:
+                n = True
+        if n is False:
+            p = QMessageBox()
+            p.setWindowTitle('ERRORE')
+            p.setText("SKU non esiste")
+            p.exec()
+
+        elif GENERE_SKU != 'uomo' and GENERE_SKU != 'donna':
+            p = QMessageBox()
+            p.setWindowTitle('ERRORE')
+            p.setText("genere non valido")
+            p.exec()
+
+        elif TIPO_ART != 'abbigliamento' and TIPO_ART != 'calzatura' and TIPO_ART != 'borsa':
+            p = QMessageBox()
+            p.setWindowTitle('ERRORE')
+            p.setText("tipologia non valida")
+            p.exec()
+
+        else:
+            a = Articolo()
+            t = a.modificaArticolo(SKU_ART, GENERE_SKU, TIPO_ART)
+
     def eliminaArticolo(self):
-        A=Articolo()
-        x=A.eliminaArticolo(self.lineEdit_18.text())
-        print("Articolo Eliminato")
+
+        SKU_ART = str(self.lineEdit_18.text())
+        lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
+        n = False
+        for art in lista_articoli:
+            if art['sku'] == SKU_ART:
+                n = True
+        if n is False:
+            p = QMessageBox()
+            p.setWindowTitle('ERRORE')
+            p.setText("SKU non esiste")
+            p.exec()
+        else:
+            A = Articolo()
+            x = A.eliminaArticolo(self.lineEdit_18.text())
+            print("Articolo Eliminato")
 
     def applicaFiltri(self):
 
@@ -519,7 +682,7 @@ class adminWindow(object):
                                                                 [str(self.comboBox.currentText())],
                                                                 [str(self.comboBox_2.currentText())],
                                                                 [str(self.comboBox_3.currentText())])
-        print(operazioniFiltrate)
+        self.graphicsView.update_data(operazioniFiltrate)
 
 
 class BarChartCanvas(FigureCanvas):
@@ -529,24 +692,25 @@ class BarChartCanvas(FigureCanvas):
         super().__init__(self.fig)
 
         if parent:
-            self.setParent(parent)  # Imposta il parent separatamente
+            self.setParent(parent)
 
         self.setStyleSheet("""
             background-color: transparent;
             border-radius: 12px;
             border: 1px solid #e0e6ed;
         """)
+
+        # Dati iniziali
         self.plot_data()
 
-    def plot_data(self):
+    def plot_data(self, vendite=None, giacenze=None):
         mesi = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"]
-        lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
-        vendite = calcolaVenditeTotali(lista_operazioni)
-        giacenze = [0] * 12
 
-        for i in range(12):
-            operazioni_ordinate = ordinamentoOperazioni(lista_operazioni, i + 1)
-            giacenze[i] = giacenzaMediaMensile(operazioni_ordinate, i + 1)
+        # Se nessun dato fornito, carica quelli dal database
+        if vendite is None or giacenze is None:
+            lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
+            vendite = calcolaVenditeTotali(lista_operazioni)
+            giacenze = [giacenzaMediaMensile(ordinamentoOperazioni(lista_operazioni, i + 1), i + 1) for i in range(12)]
 
         max_vendite = max(vendite) if vendite else 1
         rotazione = indiceRotazione(vendite, giacenze)
@@ -578,3 +742,8 @@ class BarChartCanvas(FigureCanvas):
         self.axes.legend()
         self.axes.grid(axis='y', linestyle='--', alpha=0.3)
         self.draw()
+
+    def update_data(self, lista_operazioni):
+        vendite = calcolaVenditeTotali(lista_operazioni)
+        giacenze = [giacenzaMediaMensile(ordinamentoOperazioni(lista_operazioni, i + 1), i + 1) for i in range(12)]
+        self.plot_data(vendite, giacenze)

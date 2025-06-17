@@ -1,122 +1,144 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QMessageBox
+from PyQt6.QtWidgets import (
+    QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel,
+    QMessageBox, QGroupBox, QFormLayout
+)
 from entities.operazione import Operazione, letturaDatabaseArticoli
-
 
 class FinestraM(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Finestra dei Magazzinieri")
-        self.setGeometry(200, 200, 300, 200)
-        layoutM = QVBoxLayout()
-        layoutH1 = QHBoxLayout()
-        layoutH2 = QHBoxLayout()
-        layoutH3 = QHBoxLayout()
-        layoutH4 = QHBoxLayout()
-        layoutH5 = QHBoxLayout()
-        layoutH6 = QHBoxLayout()
+        self.setGeometry(200, 200, 700, 300)
 
-        self.numero_ag = QLineEdit()
-        self.numero_ag.setMaximumWidth(100)
+        layoutMain = QHBoxLayout()
+
+        # ---------- SEZIONE NUOVA GIACENZA ----------
+        nuovaGiacenzaBox = QGroupBox("Nuova Giacenza")
+        nuovaGiacenzaLayout = QFormLayout()
 
         self.sku_ag = QLineEdit()
-        self.sku_ag.setMaximumWidth(100)
+        self.sku_ag.setPlaceholderText("Inserisci SKU")
+        self.numero_ag = QLineEdit()
+        self.numero_ag.setPlaceholderText("Inserisci Quantità")
+
+        nuovaGiacenzaLayout.addRow("SKU:", self.sku_ag)
+        nuovaGiacenzaLayout.addRow("Quantità:", self.numero_ag)
+
+        btn_aggiungi = QPushButton("Aggiungi")
+        btn_aggiungi.clicked.connect(self.aggiunta)
+        nuovaGiacenzaLayout.addWidget(btn_aggiungi)
+
+        nuovaGiacenzaBox.setLayout(nuovaGiacenzaLayout)
+        layoutMain.addWidget(nuovaGiacenzaBox)
+
+        # ---------- SEZIONE MODIFICA GIACENZA ----------
+        modificaBox = QGroupBox("Modifica Giacenza")
+        modificaLayout = QFormLayout()
 
         self.id_Giacenza = QLineEdit()
-        self.id_Giacenza.setMaximumWidth(100)
+        self.id_Giacenza.setPlaceholderText("ID Operazione")
 
         self.sku_mg = QLineEdit()
-        self.sku_mg.setMaximumWidth(100)
-
+        self.sku_mg.setPlaceholderText("SKU")
         self.numero_mg = QLineEdit()
-        self.numero_mg.setMaximumWidth(100)
+        self.numero_mg.setPlaceholderText("Quantità")
 
-        aggiungi = QPushButton("Aggiungi")
-        aggiungi.clicked.connect(self.aggiunta)
-        modifica = QPushButton("Modifica")
-        modifica.clicked.connect(self.modifica_)
+        modificaLayout.addRow("ID Operazione:", self.id_Giacenza)
+        modificaLayout.addRow("SKU:", self.sku_mg)
+        modificaLayout.addRow("Quantità:", self.numero_mg)
 
-        layoutH5.addWidget(QLabel('NUOVA GIACENZA'))
-        layoutH5.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layoutM.addLayout(layoutH5)
+        btn_modifica = QPushButton("Modifica")
+        btn_modifica.clicked.connect(self.modifica_)
+        modificaLayout.addWidget(btn_modifica)
 
+        modificaBox.setLayout(modificaLayout)
+        layoutMain.addWidget(modificaBox)
 
-        layoutH1.addWidget(QLabel('SKU:'))
-        layoutH1.addWidget(self.sku_ag)
-        layoutH1.addWidget(QLabel('QUANTITÀ:'))
-        layoutH1.addWidget(self.numero_ag)
-        layoutM.addLayout(layoutH1)
+        self.setLayout(layoutMain)
 
-        layoutM.addWidget(aggiungi)
+        # ---------- STILE ----------
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #ffffff;
+                font-family: Arial, sans-serif;
+                color: #000000;
+            }
+            QGroupBox {
+                border: 2px solid #0F4C81;
+                border-radius: 8px;
+                margin-top: 10px;
+                padding: 10px;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 5px;
+                color: #0F4C81;
+                font-weight: bold;
+                font-size: 16px;
+            }
+            QLineEdit {
+                padding: 8px;
+                border: 2px solid #cccccc;
+                border-radius: 8px;
+                font-size: 14px;
+                color: black;
+            }
+            
+            QLineEdit:focus {
+                border: 2px solid #3A81F1;
+            }
+            
+            QPushButton {
+                padding: 10px;
+                background-color: #0F4C81;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: bold;
+            }
 
-        layoutH6.addWidget(QLabel('MODIFICA GIACENZA'))
-        layoutH6.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layoutM.addLayout(layoutH6)
+            QPushButton:hover {
+                background-color: #1666AA;
+            }
 
-        layoutH3.addWidget(QLabel('ID GIACENZA:'))
-        layoutH3.addWidget(self.id_Giacenza)
+            QPushButton:pressed {
+                background-color: #0C3C66;
+            }
+        """)
 
-        layoutH3.addWidget(QLabel('SKU:'))
-        layoutH3.addWidget(self.sku_mg)
-
-        layoutH3.addWidget(QLabel('QUANTITÀ:'))
-        layoutH3.addWidget(self.numero_mg)
-
-        layoutM.addLayout(layoutH3)
-
-        layoutM.addWidget(modifica)
-        layoutM.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.setLayout(layoutM)
     def aggiunta(self):
         SKU_AG = self.sku_ag.text()
         N_AG = self.numero_ag.text()
 
-
         if SKU_AG == '' or N_AG == '':
-            a = QMessageBox()
-            a.setWindowTitle('ERRORE')
-            a.setText('Ci sono dei campi vuoti')
-            a.exec()
+            QMessageBox.critical(self, 'ERRORE', 'Ci sono dei campi vuoti')
         else:
             lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
             n = 0
             for art in lista_articoli:
-                if art['sku']==SKU_AG:
+                if art['sku'] == SKU_AG:
                     n += 1
             if n == 1:
                 O = Operazione()
                 O.aggiungiGiacenza(self.sku_ag.text(), self.numero_ag.text())
             else:
-                o = QMessageBox()
-                o.setWindowTitle('ERRORE')
-                o.setText('SKU NON ESISTENTE')
-                o.exec()
-
+                QMessageBox.critical(self, 'ERRORE', 'SKU NON ESISTENTE')
 
     def modifica_(self):
         SKU_MG = self.sku_mg.text()
-
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         n = False
         for art in lista_articoli:
             if art['sku'] == SKU_MG or SKU_MG == '':
                 n = True
-        if n is True:
+        if n:
             Opp = Operazione()
-            k = Opp.modificaGiacenza(int(self.id_Giacenza.text()), str(self.sku_mg.text()), str(self.numero_mg.text()),None)
-            if k == True:
-                p = QMessageBox()
-                p.setWindowTitle('ERRORE')
-                p.setText("L'operazione selezionata non è una giacenza")
-                p.exec()
+            k = Opp.modificaGiacenza(int(self.id_Giacenza.text()), self.sku_mg.text(), self.numero_mg.text(), None)
+            if k is True:
+                QMessageBox.critical(self, 'ERRORE', "L'operazione selezionata non è una giacenza")
             elif k == 'Errore':
-                u = QMessageBox()
-                u.setWindowTitle('ERRORE')
-                u.setText("L'operazione non esiste")
-                u.exec()
-        else :
-            w = QMessageBox()
-            w.setWindowTitle('ERRORE')
-            w.setText("SKU non esiste ")
-            w.exec()
+                QMessageBox.critical(self, 'ERRORE', "L'operazione non esiste")
+        else:
+            QMessageBox.critical(self, 'ERRORE', "SKU non esiste")
