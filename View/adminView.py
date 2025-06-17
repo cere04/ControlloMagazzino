@@ -141,7 +141,7 @@ class adminWindow(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1193, 893)
 
-        # MainWindow.setStyleSheet(STYLESHEET)
+        MainWindow.setStyleSheet(STYLESHEET)
 
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
