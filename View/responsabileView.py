@@ -228,24 +228,24 @@ class FinestraRC(QWidget):
             operazioniFiltrate = operation_service.filtraOperazioni(
                 lista_operazioni,
                 lista_articoli,
-                [self.lineEdit_17.text()],
-                [self.comboBox.currentText()],
-                [self.comboBox_2.currentText()],
-                [self.comboBox_3.currentText()]
+                [self.lineEdit_sku.text()],
+                [self.comboBox_genere.currentText()],
+                [self.comboBox_tipologia.currentText()],
+                [self.comboBox_paese.currentText()]
             )
 
             if not operazioniFiltrate:
                 QMessageBox.information(
-                    self.centralwidget,
+                    self,
                     'Nessun risultato',
                     'Nessuna operazione trovata con i filtri selezionati'
                 )
             else:
-                self.graphicsView.update_data(operazioniFiltrate)
+                self.chart.update_data(operazioniFiltrate)
 
         except Exception as e:
             QMessageBox.critical(
-                self.centralwidget,
+                self,
                 'Errore',
                 f'Errore durante l\'applicazione dei filtri: {str(e)}'
             )

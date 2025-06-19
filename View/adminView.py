@@ -557,7 +557,7 @@ class adminWindow(object):
         self.label_30.setText(_translate("MainWindow", "Paese"))
         self.pushButton_7.setText(_translate("MainWindow", "Conferma Operazione"))
         self.pushButton_8.setText(_translate("MainWindow", "Applica Filtri"))
-        # self.menuControlloMagazzino.setTitle(_translate("MainWindow", "ControlloMagazzino"))
+        self.menuControlloMagazzino.setTitle(_translate("MainWindow", "ControlloMagazzino"))
         self.menuControlloMagazzino.menuAction().setVisible(False)
 
     def aggiuntaVendita(self):
