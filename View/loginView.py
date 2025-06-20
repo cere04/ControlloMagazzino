@@ -7,6 +7,7 @@ from View.responsabileView import FinestraRC
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLineEdit, QMessageBox, QMainWindow, QLabel
 
+
 class Finestra1(QWidget):
     def __init__(self):
         super().__init__()
@@ -35,7 +36,7 @@ class Finestra1(QWidget):
 
         self.finestra_r = FinestraR(self)
 
-        # ✅ Applica stile coerente
+        # Applica stile
         self.setStyleSheet("""
             QWidget {
                 background-color: #ffffff;
@@ -43,7 +44,7 @@ class Finestra1(QWidget):
                 font-size: 14px;
                 color: black;
             }
-            
+
             QLabel#TitoloLogin {
                 font-size: 20px;
                 font-weight: bold;
@@ -96,6 +97,9 @@ class Finestra1(QWidget):
             }
         """)
 
+        # Attributo per tenere traccia della finestra corrente
+        self.current_window = None
+
     def finestraRegistrazione(self):
         self.finestra_r.show()
 
@@ -108,26 +112,47 @@ class Finestra1(QWidget):
             QMessageBox.critical(self, "Errore", "Nome utente non esistente, riprovare")
             return
 
-        ruolo = user.get('ruoloUtente')
+        # Creiamo il dizionario con i dati utente nel formato corretto
+        user_data = {
+            'nome': user.get('nome'),
+            'cognome': user.get('cognome'),
+            'ruolo': user.get('ruoloUtente'),
+            'codice': user.get('id')
+        }
+
         self.hide()
 
-        if ruolo == 'Magazziniere':
-            self.finestra_m = FinestraM()
-            self.finestra_m.show()
+        if user_data['ruolo'] == 'Magazziniere':
+            self.current_window = FinestraM(user_data)
+            self.current_window.logout_requested.connect(self.handle_logout)
+            self.current_window.show()
 
-        elif ruolo == 'Commesso':
-            self.finestra_c = FinestraC()
-            self.finestra_c.show()
+        elif user_data['ruolo'] == 'Commesso':
+            self.current_window = FinestraC(user_data)
+            self.current_window.logout_requested.connect(self.handle_logout)
+            self.current_window.show()
 
-        elif ruolo == 'Responsabile Commerciale':
-            self.finestra_rc = FinestraRC()
-            self.finestra_rc.show()
+        elif user_data['ruolo'] == 'Responsabile Commerciale':
+            self.current_window = FinestraRC(user_data)
+            self.current_window.logout_requested.connect(self.handle_logout)
+            self.current_window.show()
 
-        elif ruolo == 'Amministratore':
-            self.finestra_a = QMainWindow()
+        elif user_data['ruolo'] == 'Amministratore':
+            self.current_window = QMainWindow()
             self.ui_admin = adminWindow()
-            self.ui_admin.setupUi(self.finestra_a)
-            self.finestra_a.show()
+            self.ui_admin.setupUi(self.current_window)
+            self.current_window.show()
 
         else:
-            QMessageBox.warning(self, "Ruolo sconosciuto", f"Ruolo '{ruolo}' non gestito.")
+            QMessageBox.warning(self, "Ruolo sconosciuto", f"Ruolo '{user_data['ruolo']}' non gestito.")
+            self.show()  # Ripristina la finestra di login
+
+    def handle_logout(self):
+        """Gestisce il logout da qualsiasi finestra"""
+        if self.current_window:
+            try:
+                self.current_window.close()
+            except:
+                pass
+            self.current_window = None
+        self.show()

@@ -1,5 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QFrame, QLabel, QComboBox, QLineEdit, QPushButton, QHBoxLayout, \
-    QMessageBox, QSizePolicy
+    QMessageBox, QSizePolicy, QMenu, QSpacerItem
+from PyQt6.QtGui import QAction
+from PyQt6.QtCore import pyqtSignal
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
@@ -82,6 +84,35 @@ STYLESHEET = """
     QPushButton:pressed {
         background-color: #0C3C66;
     }
+
+    /* Menu styling */
+    QMenu {
+        background-color: white;
+        border: 1px solid #e0e6ed;
+        border-radius: 6px;
+        padding: 6px;
+        min-width: 220px;  
+        font-size: 13px;
+    }
+    QMenu::item {
+        padding: 6px 20px 6px 12px;  
+        min-height: 28px;
+    }
+    QMenu::item:disabled {
+        color: #2d3748;
+        background: transparent;
+        font-weight: bold;
+        font-size: 13px; 
+    }
+    QMenu::item:selected {
+        background-color: #0F4C81;
+        color: white;
+    }
+    QMenu::separator {
+        height: 1px;
+        background: #e0e6ed;
+        margin: 4px 0;
+    }
 """
 
 
@@ -151,8 +182,11 @@ class BarChartCanvas(FigureCanvas):
 
 
 class FinestraRC(QWidget):
-    def __init__(self):
+    logout_requested = pyqtSignal()
+
+    def __init__(self, user_data):
         super().__init__()
+        self.user_data = user_data
         self.setStyleSheet(STYLESHEET)
         self.setWindowTitle("Responsabile Commerciale")
         self.resize(1200, 800)
@@ -163,7 +197,40 @@ class FinestraRC(QWidget):
         main_layout.setSpacing(15)
         self.setLayout(main_layout)
 
-        # Frame per i filtri (più compatto)
+        # Top bar con menu utente
+        top_bar = QFrame()
+        top_bar_layout = QHBoxLayout(top_bar)
+        top_bar_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Bottone menu a tendina a sinistra
+        self.menu_button = QPushButton("☰")
+        self.menu_button.setFixedSize(45, 35)  # Dimensioni leggermente ridotte
+        self.menu_button.setStyleSheet("""
+                    QPushButton {
+                        border: none;
+                        background: transparent;
+                        color: #0F4C81;
+                        font-size: 20px;  /* Dimensione font ridotta */
+                        font-weight: bold;
+                        qproperty-icon: none;  
+                    }
+                    QPushButton:hover {
+                        color: #1666AA;
+                        background-color: #e0e6ed;
+                        border-radius: 4px;
+                    }
+                """)
+
+        self.menu_button.clicked.connect(self.show_user_menu)
+        top_bar_layout.addWidget(self.menu_button)
+
+        # Spacer per spingere tutto il resto a destra
+        spacer = QSpacerItem(20, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        top_bar_layout.addSpacerItem(spacer)
+
+        main_layout.addWidget(top_bar)
+
+        # Frame per i filtri
         filter_frame = QFrame()
         filter_frame.setObjectName("filterFrame")
         filter_frame.setMaximumHeight(60)
@@ -212,6 +279,11 @@ class FinestraRC(QWidget):
         btn_apply.clicked.connect(self.applicaFiltri)
         filter_layout.addWidget(btn_apply)
 
+        # Aggiungiamo il bottone Reset
+        btn_reset = QPushButton("Reset")
+        btn_reset.clicked.connect(self.reset_filtri)
+        filter_layout.addWidget(btn_reset)
+
         main_layout.addWidget(filter_frame)
 
         self.chart = BarChartCanvas()
@@ -219,6 +291,52 @@ class FinestraRC(QWidget):
         main_layout.addWidget(self.chart, 1)  # Fattore di espansione = 1
 
         self.show()
+
+    def reset_filtri(self):
+        """Resetta tutti i campi di filtro e ripristina il grafico originale"""
+        # Resetta le combo box al primo elemento (spazio vuoto)
+        self.comboBox_genere.setCurrentIndex(0)
+        self.comboBox_tipologia.setCurrentIndex(0)
+        self.comboBox_paese.setCurrentIndex(0)
+
+        # Pulisce il campo SKU
+        self.lineEdit_sku.clear()
+
+        # Ricarica il grafico con i dati originali
+        self.chart.plot_data()
+
+    def show_user_menu(self):
+        menu = QMenu()
+
+        # Informazioni utente (non cliccabili)
+        nome_completo = QAction(f"Nome: {self.user_data['nome']} {self.user_data['cognome']}", self)
+        nome_completo.setEnabled(False)
+        menu.addAction(nome_completo)
+
+        ruolo = QAction(f"Ruolo: {self.user_data['ruolo']}", self)
+        ruolo.setEnabled(False)
+        menu.addAction(ruolo)
+
+        user_id = QAction(f"ID: {self.user_data['codice']}", self)
+        user_id.setEnabled(False)
+        menu.addAction(user_id)
+
+        menu.addSeparator()
+
+        # Azione logout
+        logout_action = QAction("Logout", self)
+        logout_action.triggered.connect(self.logout)
+        menu.addAction(logout_action)
+
+        # Applica stile al menu
+        menu.setStyleSheet(STYLESHEET)
+
+        # Mostra menu sotto il bottone
+        menu.exec(self.menu_button.mapToGlobal(self.menu_button.rect().bottomLeft()))
+
+    def logout(self):
+        self.logout_requested.emit()
+        self.close()
 
     def applicaFiltri(self):
         try:

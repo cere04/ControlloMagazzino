@@ -494,6 +494,14 @@ class adminWindow(object):
         self.pushButton_8.setObjectName("pushButton_8")
         self.pushButton_8.clicked.connect(self.applicaFiltri)
         self.horizontalLayout.addWidget(self.pushButton_8)
+
+        # Aggiunto il pulsante Reset
+        self.btn_reset = QtWidgets.QPushButton(parent=self.frame_3)
+        self.btn_reset.setObjectName("btn_reset")
+        self.btn_reset.setText("Reset")
+        self.btn_reset.clicked.connect(self.reset_filtri)
+        self.horizontalLayout.addWidget(self.btn_reset)
+
         self.gridLayout_2.addWidget(self.frame_3, 0, 1, 1, 1)
         self.graphicsView = BarChartCanvas(self.widget)
         self.graphicsView.setMaximumSize(QtCore.QSize(16777215, 700))
@@ -559,6 +567,18 @@ class adminWindow(object):
         self.pushButton_8.setText(_translate("MainWindow", "Applica Filtri"))
         self.menuControlloMagazzino.setTitle(_translate("MainWindow", "ControlloMagazzino"))
         self.menuControlloMagazzino.menuAction().setVisible(False)
+
+    def reset_filtri(self):
+        """Resetta tutti i campi di filtro e ripristina il grafico originale"""
+        self.comboBox.setCurrentIndex(0)
+        self.comboBox_2.setCurrentIndex(0)
+        self.comboBox_3.setCurrentIndex(0)
+
+        # Pulisce il campo SKU
+        self.lineEdit_17.clear()
+
+        # Ricarica il grafico con i dati originali
+        self.graphicsView.plot_data()
 
     def aggiuntaVendita(self):
         SKU_AV = self.lineEdit_5.text()

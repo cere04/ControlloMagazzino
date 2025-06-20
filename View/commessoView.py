@@ -1,19 +1,63 @@
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel,
-    QMessageBox, QGroupBox, QFormLayout, QSpinBox, QComboBox
+    QMessageBox, QGroupBox, QFormLayout, QSpinBox, QComboBox, QMenu,
+    QSpacerItem, QSizePolicy, QFrame
 )
+from PyQt6.QtGui import QAction
 from entities.operazione import Operazione, letturaDatabaseArticoli
 
 
 class FinestraC(QWidget):
-    def __init__(self):
+    logout_requested = pyqtSignal()
+
+    def __init__(self, user_data):
         super().__init__()
+        self.user_data = user_data
         self.setWindowTitle("Finestra dei Commessi")
         self.setGeometry(200, 200, 700, 300)
 
-        layoutMain = QHBoxLayout()
-        layoutMain.setSpacing(20)  # Added spacing between groups
+        # Layout principale
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(20, 15, 20, 20)
+        main_layout.setSpacing(15)
+        self.setLayout(main_layout)
+
+        # ---------- TOP BAR CON MENU UTENTE ----------
+        top_bar = QFrame()
+        top_bar_layout = QHBoxLayout(top_bar)
+        top_bar_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Bottone menu a tendina a sinistra (dimensioni ottimizzate)
+        self.menu_button = QPushButton("☰")
+        self.menu_button.setFixedSize(45, 35)
+        self.menu_button.setStyleSheet("""
+            QPushButton {
+                border: none;
+                background: transparent;
+                color: #0F4C81;
+                font-size: 20px;
+                font-weight: bold;
+                qproperty-icon: none;  
+            }
+            QPushButton:hover {
+                color: #1666AA;
+                background-color: #e0e6ed;
+                border-radius: 4px;
+            }
+        """)
+        self.menu_button.clicked.connect(self.show_user_menu)
+        top_bar_layout.addWidget(self.menu_button)
+
+        # Spacer per spingere tutto il resto a destra
+        spacer = QSpacerItem(20, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        top_bar_layout.addSpacerItem(spacer)
+
+        main_layout.addWidget(top_bar)
+
+        # ---------- CONTENUTO PRINCIPALE ----------
+        content_layout = QHBoxLayout()
+        content_layout.setSpacing(20)
 
         nuovaVenditaBox = QGroupBox("Nuova Vendita")
         nuovaVenditaLayout = QFormLayout()
@@ -44,7 +88,7 @@ class FinestraC(QWidget):
         nuovaVenditaLayout.addWidget(btn_aggiungi)
 
         nuovaVenditaBox.setLayout(nuovaVenditaLayout)
-        layoutMain.addWidget(nuovaVenditaBox)
+        content_layout.addWidget(nuovaVenditaBox)
 
         # ---------- SEZIONE MODIFICA VENDITA ----------
         modificaVenditaBox = QGroupBox("Modifica Vendita")
@@ -80,24 +124,29 @@ class FinestraC(QWidget):
         modificaVenditaLayout.addWidget(btn_modifica)
 
         modificaVenditaBox.setLayout(modificaVenditaLayout)
-        layoutMain.addWidget(modificaVenditaBox)
+        content_layout.addWidget(modificaVenditaBox)
 
-        self.setLayout(layoutMain)
+        main_layout.addLayout(content_layout)
 
-        # ---------- STILE ----------
+        # Applica lo stile
+        self.apply_style()
+
+        self.show()
+
+    def apply_style(self):
         self.setStyleSheet("""
             QWidget {
                 background-color: #f5f7fa;
                 font-family: Arial, sans-serif;
                 color: #2d3748;
             }
-            
-            /* Imposta sfondo trasparente per le etichette */
+
             QLabel {
                 font-weight: 500;
                 background-color: transparent;
+                font-size: 13px;
             } 
-            
+
             QGroupBox {
                 border: 2px solid #0F4C81;
                 border-radius: 8px;
@@ -111,25 +160,25 @@ class FinestraC(QWidget):
                 padding: 0 5px;
                 color: #0F4C81;
                 font-weight: bold;
-                font-size: 16px;
+                font-size: 14px;
             }
             QLineEdit {
                 padding: 8px;
                 border: 2px solid #cccccc;
                 border-radius: 8px;
-                font-size: 14px;
+                font-size: 13px;
                 color: black;
             }
             QLineEdit:focus {
                 border: 2px solid #3A81F1;
             }
-            
+
             /* ComboBox styling */
             QComboBox {
                 padding: 8px;
                 border: 2px solid #cccccc;
                 border-radius: 8px;
-                font-size: 14px;
+                font-size: 13px;
                 color: black;
                 background-color: white;
             }
@@ -137,16 +186,17 @@ class FinestraC(QWidget):
             QComboBox:focus {
                 border: 2px solid #3A81F1;
             }
-            
+
             QComboBox QAbstractItemView {
                 border: 2px solid #cccccc;
                 border-radius: 8px;
-                padding: 8px;
+                padding: 6px;
                 background: white;
                 selection-background-color: #0F4C81;
                 selection-color: white;
+                font-size: 13px;
             }
-            
+
             QComboBox::drop-down {
                 subcontrol-origin: padding;
                 subcontrol-position: center right;
@@ -160,43 +210,43 @@ class FinestraC(QWidget):
                 padding: 8px;
                 border: 2px solid #cccccc;
                 border-radius: 8px;
-                font-size: 14px;
+                font-size: 13px;
                 color: black;
-                padding-right: 25px; /* Space for buttons */
+                padding-right: 25px;
                 background-color: white;
             }
 
             QSpinBox:focus {
                 border: 2px solid #3A81F1;
             }
-            
+
             QSpinBox::up-button, QSpinBox::down-button {
                 subcontrol-origin: border;
                 subcontrol-position: center right;
                 width: 16px;
                 background-color: none;
             }
-            
+
             QSpinBox::up-button {
                 subcontrol-position: top right;
                 margin-top: 2px;
                 margin-right: 3px;
             }
-            
+
             QSpinBox::down-button {
                 subcontrol-position: bottom right;
                 margin-bottom: 2px;
                 margin-right: 3px;
             }
 
-            
             QPushButton {
-                padding: 10px;
+                padding: 8px 12px;
                 background-color: #0F4C81;
                 color: white;
                 border: none;
-                border-radius: 8px;
+                border-radius: 6px;
                 font-weight: bold;
+                font-size: 13px;
             }
             QPushButton:hover {
                 background-color: #1666AA;
@@ -204,15 +254,74 @@ class FinestraC(QWidget):
             QPushButton:pressed {
                 background-color: #0C3C66;
             }
-            QLabel {
-                font-weight: 500;
+
+            /* Stile ottimizzato per il menu */
+            QMenu {
+                background-color: white;
+                border: 1px solid #e0e6ed;
+                border-radius: 6px;
+                padding: 6px;
+                min-width: 220px;  
+                font-size: 13px;   
+            }
+            QMenu::item {
+                padding: 6px 20px 6px 12px;  
+                min-height: 28px;  
+            }
+            QMenu::item:disabled {
+                color: #2d3748;
+                background: transparent;
+                font-weight: bold;
+                font-size: 13px;  
+            }
+            QMenu::item:selected {
+                background-color: #0F4C81;
+                color: white;
+            }
+            QMenu::separator {
+                height: 1px;
+                background: #e0e6ed;
+                margin: 4px 0;
             }
         """)
 
+    def show_user_menu(self):
+        menu = QMenu(self)
+
+        # Informazioni utente (non cliccabili)
+        nome_completo = QAction(f"Nome: {self.user_data['nome']} {self.user_data['cognome']}", self)
+        nome_completo.setEnabled(False)
+        menu.addAction(nome_completo)
+
+        ruolo = QAction(f"Ruolo: {self.user_data['ruolo']}", self)
+        ruolo.setEnabled(False)
+        menu.addAction(ruolo)
+
+        user_id = QAction(f"ID: {self.user_data['codice']}", self)
+        user_id.setEnabled(False)
+        menu.addAction(user_id)
+
+        menu.addSeparator()
+
+        # Azione logout
+        logout_action = QAction("Logout", self)
+        logout_action.triggered.connect(self.logout)
+        menu.addAction(logout_action)
+
+        # Applica stile al menu
+        menu.setStyleSheet(self.styleSheet())
+
+        # Mostra menu sotto il bottone
+        menu.exec(self.menu_button.mapToGlobal(self.menu_button.rect().bottomLeft()))
+
+    def logout(self):
+        self.logout_requested.emit()
+        self.close()
+
     def aggiunta(self):
         SKU_AV = self.sku_av.text().strip()
-        N_AV = self.numero_av.value()  # Ora usiamo value() per lo SpinBox
-        P_AV = self.paese_av.currentText().strip()  # Ora usiamo currentText() per ComboBox
+        N_AV = self.numero_av.value()
+        P_AV = self.paese_av.currentText().strip()
 
         # Controllo campi vuoti
         if not SKU_AV:
@@ -273,8 +382,8 @@ class FinestraC(QWidget):
     def modifica_v_(self):
         ID_OP = self.id_Vendita.text().strip()
         SKU_MV = self.sku_mv.text().strip()
-        QTA_MV = self.numero_mv.value()  # Ora usiamo value() per lo SpinBox
-        PAESE_MV = self.paese_mv.currentText().strip()  # Ora usiamo currentText() per ComboBox
+        QTA_MV = self.numero_mv.value()
+        PAESE_MV = self.paese_mv.currentText().strip()
 
         # Controllo campi vuoti
         if not ID_OP:

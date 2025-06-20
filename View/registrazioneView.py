@@ -1,6 +1,6 @@
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
-    QApplication, QWidget, QPushButton, QVBoxLayout, QLineEdit,
+    QWidget, QPushButton, QVBoxLayout, QLineEdit,
     QLabel, QComboBox, QMessageBox
 )
 from Controllers.auth_service import AuthService
@@ -33,14 +33,14 @@ class FinestraR(QWidget):
         # Campo Nome
         self.layout.addWidget(QLabel('NOME'))
         self.Label1 = QLineEdit()
-        self.Label1.setPlaceholderText("Mario")
+        self.Label1.setPlaceholderText("Inserisci nome")
         self.Label1.setObjectName("lineEdit_nome")
         self.layout.addWidget(self.Label1)
 
         # Campo Cognome
         self.layout.addWidget(QLabel('COGNOME'))
         self.Label2 = QLineEdit()
-        self.Label2.setPlaceholderText("Rossi")
+        self.Label2.setPlaceholderText("Inserisci cognome")
         self.Label2.setObjectName("lineEdit_cognome")
         self.layout.addWidget(self.Label2)
 
@@ -49,6 +49,7 @@ class FinestraR(QWidget):
         self.label3 = QComboBox()
         self.label3.setObjectName("comboBox_ruolo")
         self.label3.addItems(["Magazziniere", "Commesso", "Responsabile Commerciale"])
+        self.label3.setCurrentIndex(-1)  # Nessuna selezione iniziale
         self.layout.addWidget(self.label3)
 
         # Bottone di registrazione
@@ -58,12 +59,33 @@ class FinestraR(QWidget):
         self.ButtonA.clicked.connect(self.Registrazione)
 
     def Registrazione(self):
+        # Controllo locale dei campi obbligatori
+        nome = self.Label1.text().strip()
+        cognome = self.Label2.text().strip()
+
+        if not nome or not cognome:
+            QMessageBox.critical(
+                self,
+                "Errore",
+                "Campi mancanti\nCompilare tutto per il rilascio del nome utente"
+            )
+            return
+
         b = AuthService()
-        f = b.aggiungiUtenti(self.Label1.text(), self.Label2.text(), self.label3.currentText())
-        if f is True:
-            QMessageBox.critical(self, "Errore", "Uno dei campi è vuoto\nCompilare tutto per il rilascio del nome utente")
-        else:
-            QMessageBox.information(self, "Nome Utente", f"Registrazione avvenuta con successo\nIl tuo nome utente è: {f}")
+        username = b.aggiungiUtenti(nome, cognome, self.label3.currentText())
+
+        if username is None:  # Gestione altri errori dal servizio
+            QMessageBox.critical(
+                self,
+                "Errore",
+                "Si è verificato un errore durante la registrazione"
+            )
+        else:  # Registrazione riuscita
+            QMessageBox.information(
+                self,
+                "Nome Utente",
+                f"Registrazione avvenuta con successo\nIl tuo nome utente è: {username}"
+            )
             self.hide()
             self.loginView.show()
 

@@ -1,29 +1,72 @@
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel,
-    QMessageBox, QGroupBox, QFormLayout, QSpinBox
+    QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton,
+    QMessageBox, QGroupBox, QFormLayout, QSpinBox, QMenu, QSpacerItem,
+    QSizePolicy, QFrame
 )
+from PyQt6.QtGui import QAction
+from PyQt6.QtCore import pyqtSignal
 from entities.operazione import Operazione, letturaDatabaseArticoli
 
 
 class FinestraM(QWidget):
-    def __init__(self):
+    logout_requested = pyqtSignal()
+
+    def __init__(self, user_data):
         super().__init__()
+        self.user_data = user_data
         self.setWindowTitle("Finestra dei Magazzinieri")
         self.setGeometry(200, 200, 700, 300)
 
-        layoutMain = QHBoxLayout()
-        layoutMain.setSpacing(20)  # Aggiunta spaziatura tra i gruppi
+        # Layout principale
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(20, 15, 20, 20)
+        main_layout.setSpacing(15)
+        self.setLayout(main_layout)
+
+        # ---------- TOP BAR CON MENU UTENTE ----------
+        top_bar = QFrame()
+        top_bar_layout = QHBoxLayout(top_bar)
+        top_bar_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Bottone menu a tendina a sinistra (dimensioni ottimizzate)
+        self.menu_button = QPushButton("☰")
+        self.menu_button.setFixedSize(45, 35)  # Dimensioni leggermente ridotte
+        self.menu_button.setStyleSheet("""
+            QPushButton {
+                border: none;
+                background: transparent;
+                color: #0F4C81;
+                font-size: 20px;  /* Dimensione font ridotta */
+                font-weight: bold;
+                qproperty-icon: none;  
+            }
+            QPushButton:hover {
+                color: #1666AA;
+                background-color: #e0e6ed;
+                border-radius: 4px;
+            }
+        """)
+        self.menu_button.clicked.connect(self.show_user_menu)
+        top_bar_layout.addWidget(self.menu_button)
+
+        # Spacer per spingere tutto il resto a destra
+        spacer = QSpacerItem(20, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        top_bar_layout.addSpacerItem(spacer)
+
+        main_layout.addWidget(top_bar)
+
+        # ---------- CONTENUTO PRINCIPALE ----------
+        content_layout = QHBoxLayout()
+        content_layout.setSpacing(20)
 
         # ---------- SEZIONE NUOVA GIACENZA ----------
         nuovaGiacenzaBox = QGroupBox("Nuova Giacenza")
         nuovaGiacenzaLayout = QFormLayout()
-        nuovaGiacenzaLayout.setSpacing(15)  # Spaziatura interna
+        nuovaGiacenzaLayout.setSpacing(15)
 
         self.sku_ag = QLineEdit()
         self.sku_ag.setPlaceholderText("Inserisci SKU")
 
-        # SpinBox per la quantità con pulsanti integrati
         self.numero_ag = QSpinBox()
         self.numero_ag.setMinimum(1)
         self.numero_ag.setMaximum(10000)
@@ -36,12 +79,12 @@ class FinestraM(QWidget):
         nuovaGiacenzaLayout.addWidget(btn_aggiungi)
 
         nuovaGiacenzaBox.setLayout(nuovaGiacenzaLayout)
-        layoutMain.addWidget(nuovaGiacenzaBox)
+        content_layout.addWidget(nuovaGiacenzaBox)
 
         # ---------- SEZIONE MODIFICA GIACENZA ----------
         modificaBox = QGroupBox("Modifica Giacenza")
         modificaLayout = QFormLayout()
-        modificaLayout.setSpacing(15)  # Spaziatura interna
+        modificaLayout.setSpacing(15)
 
         self.id_Giacenza = QLineEdit()
         self.id_Giacenza.setPlaceholderText("ID Operazione")
@@ -49,7 +92,6 @@ class FinestraM(QWidget):
         self.sku_mg = QLineEdit()
         self.sku_mg.setPlaceholderText("SKU")
 
-        # SpinBox per la quantità con pulsanti integrati
         self.numero_mg = QSpinBox()
         self.numero_mg.setMinimum(1)
         self.numero_mg.setMaximum(10000)
@@ -63,11 +105,16 @@ class FinestraM(QWidget):
         modificaLayout.addWidget(btn_modifica)
 
         modificaBox.setLayout(modificaLayout)
-        layoutMain.addWidget(modificaBox)
+        content_layout.addWidget(modificaBox)
 
-        self.setLayout(layoutMain)
+        main_layout.addLayout(content_layout)
 
-        # ---------- STILE ----------
+        # Applica lo stile
+        self.apply_style()
+
+        self.show()
+
+    def apply_style(self):
         self.setStyleSheet("""
             QWidget {
                 background-color: #f5f7fa;
@@ -75,10 +122,10 @@ class FinestraM(QWidget):
                 color: #2d3748;
             }
 
-            /* Imposta sfondo trasparente per le etichette */
             QLabel {
                 font-weight: 500;
                 background-color: transparent;
+                font-size: 13px;  /* Dimensione font ridotta */
             } 
 
             QGroupBox {
@@ -94,27 +141,26 @@ class FinestraM(QWidget):
                 padding: 0 5px;
                 color: #0F4C81;
                 font-weight: bold;
-                font-size: 16px;
+                font-size: 14px;  /* Dimensione font ridotta */
             }
             QLineEdit {
                 padding: 8px;
                 border: 2px solid #cccccc;
                 border-radius: 8px;
-                font-size: 14px;
+                font-size: 13px;  /* Dimensione font ridotta */
                 color: black;
             }
             QLineEdit:focus {
                 border: 2px solid #3A81F1;
             }
 
-            /* SpinBox styling */
             QSpinBox {
                 padding: 8px;
                 border: 2px solid #cccccc;
                 border-radius: 8px;
-                font-size: 14px;
+                font-size: 13px;  /* Dimensione font ridotta */
                 color: black;
-                padding-right: 25px; /* Space for buttons */
+                padding-right: 25px;
                 background-color: white;
             }
 
@@ -142,12 +188,13 @@ class FinestraM(QWidget):
             }
 
             QPushButton {
-                padding: 10px;
+                padding: 8px 12px;  /* Padding ridotto */
                 background-color: #0F4C81;
                 color: white;
                 border: none;
-                border-radius: 8px;
+                border-radius: 6px;
                 font-weight: bold;
+                font-size: 13px;  /* Dimensione font ridotta */
             }
             QPushButton:hover {
                 background-color: #1666AA;
@@ -155,13 +202,75 @@ class FinestraM(QWidget):
             QPushButton:pressed {
                 background-color: #0C3C66;
             }
+
+            /* Stile ottimizzato per il menu */
+            QMenu {
+                background-color: white;
+                border: 1px solid #e0e6ed;
+                border-radius: 6px;
+                padding: 6px;
+                min-width: 220px;  
+                font-size: 13px;   
+            }
+            QMenu::item {
+                padding: 6px 20px 6px 12px;  
+                min-height: 28px;  
+            }
+            QMenu::item:disabled {
+                color: #2d3748;
+                background: transparent;
+                font-weight: bold;
+                font-size: 13px;  
+            }
+            QMenu::item:selected {
+                background-color: #0F4C81;
+                color: white;
+            }
+            QMenu::separator {
+                height: 1px;
+                background: #e0e6ed;
+                margin: 4px 0;
+            }
         """)
+
+    def show_user_menu(self):
+        menu = QMenu(self)
+
+        # Informazioni utente (non cliccabili)
+        nome_completo = QAction(f"Nome: {self.user_data['nome']} {self.user_data['cognome']}", self)
+        nome_completo.setEnabled(False)
+        menu.addAction(nome_completo)
+
+        ruolo = QAction(f"Ruolo: {self.user_data['ruolo']}", self)
+        ruolo.setEnabled(False)
+        menu.addAction(ruolo)
+
+        user_id = QAction(f"ID: {self.user_data['codice']}", self)
+        user_id.setEnabled(False)
+        menu.addAction(user_id)
+
+        menu.addSeparator()
+
+        # Azione logout
+        logout_action = QAction("Logout", self)
+        logout_action.triggered.connect(self.logout)
+        menu.addAction(logout_action)
+
+        # Applica stile al menu
+        menu.setStyleSheet(self.styleSheet())
+
+        # Mostra menu sotto il bottone
+        menu.exec(self.menu_button.mapToGlobal(self.menu_button.rect().bottomLeft()))
+
+
+    def logout(self):
+        self.logout_requested.emit()
+        self.close()
 
     def aggiunta(self):
         SKU_AG = self.sku_ag.text().strip()
-        N_AG = self.numero_ag.value()  # Usiamo value() per lo SpinBox
+        N_AG = self.numero_ag.value()
 
-        # Controllo campi vuoti
         if not SKU_AG:
             QMessageBox.critical(
                 self,
@@ -170,7 +279,6 @@ class FinestraM(QWidget):
             )
             return
 
-        # Verifica esistenza SKU
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         sku_exists = any(art['sku'] == SKU_AG for art in lista_articoli)
 
@@ -187,7 +295,6 @@ class FinestraM(QWidget):
             O = Operazione()
             O.aggiungiGiacenza(SKU_AG, N_AG)
 
-            # Messaggio di successo
             QMessageBox.information(
                 self,
                 'Successo',
@@ -196,7 +303,6 @@ class FinestraM(QWidget):
                 f'Quantità: {N_AG}'
             )
 
-            # Reset campi
             self.sku_ag.clear()
             self.numero_ag.setValue(1)
 
@@ -210,9 +316,8 @@ class FinestraM(QWidget):
     def modifica_(self):
         ID_OP = self.id_Giacenza.text().strip()
         SKU_MG = self.sku_mg.text().strip()
-        QTA_MG = self.numero_mg.value()  # Usiamo value() per lo SpinBox
+        QTA_MG = self.numero_mg.value()
 
-        # Controllo campi vuoti
         if not ID_OP:
             QMessageBox.critical(
                 self,
@@ -229,7 +334,6 @@ class FinestraM(QWidget):
             )
             return
 
-        # Controllo ID operazione valido
         try:
             id_op = int(ID_OP)
             if id_op <= 0:
@@ -243,7 +347,6 @@ class FinestraM(QWidget):
             self.id_Giacenza.clear()
             return
 
-        # Verifica esistenza SKU
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         sku_exists = any(art['sku'] == SKU_MG for art in lista_articoli)
 
@@ -273,7 +376,6 @@ class FinestraM(QWidget):
                     "Nessuna operazione trovata con l'ID specificato"
                 )
             else:
-                # Messaggio di successo
                 QMessageBox.information(
                     self,
                     'Successo',
@@ -283,7 +385,6 @@ class FinestraM(QWidget):
                     f'Nuova quantità: {QTA_MG}'
                 )
 
-                # Reset campi
                 self.id_Giacenza.clear()
                 self.sku_mg.clear()
                 self.numero_mg.setValue(1)
