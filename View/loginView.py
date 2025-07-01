@@ -137,10 +137,12 @@ class Finestra1(QWidget):
             self.current_window.logout_requested.connect(self.handle_logout)
             self.current_window.show()
 
+
         elif user_data['ruolo'] == 'Amministratore':
             self.current_window = QMainWindow()
             self.ui_admin = adminWindow()
-            self.ui_admin.setupUi(self.current_window)
+            self.ui_admin.setupUi(self.current_window, user_data)  # Passa user_data
+            self.ui_admin.logout_requested.connect(self.handle_logout)  # Connetti il segnale
             self.current_window.show()
 
         else:
