@@ -202,7 +202,7 @@ class adminWindow(QObject):
     def setupUi(self, MainWindow, user_data):
         self.user_data = user_data
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1300, 860)  # Increased height to accommodate top bar
+        MainWindow.resize(1300, 860)  # Altezza aumentata per la top bar
         MainWindow.setMinimumSize(QtCore.QSize(1200, 860))
 
         MainWindow.setStyleSheet(STYLESHEET)
@@ -212,19 +212,14 @@ class adminWindow(QObject):
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
 
-        # ---------- TOP BAR ----------
+        # ---------- TOP BAR A SINISTRA ----------
         top_bar = QtWidgets.QFrame(parent=self.centralwidget)
         top_bar.setMaximumHeight(50)
         top_bar_layout = QtWidgets.QHBoxLayout(top_bar)
         top_bar_layout.setContentsMargins(10, 0, 10, 0)
         top_bar_layout.setSpacing(0)
 
-        # Spacer to push button to the right
-        spacer = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                       QtWidgets.QSizePolicy.Policy.Minimum)
-        top_bar_layout.addItem(spacer)
-
-        # Menu button
+        # Pulsante menu a SINISTRA
         self.menu_button = QtWidgets.QPushButton(parent=top_bar)
         self.menu_button.setText("☰")
         self.menu_button.setFixedSize(45, 35)
@@ -246,16 +241,21 @@ class adminWindow(QObject):
         self.menu_button.clicked.connect(self.show_user_menu)
         top_bar_layout.addWidget(self.menu_button)
 
+        # Spacer per spingere il resto a destra
+        spacer_top = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+                                           QtWidgets.QSizePolicy.Policy.Minimum)
+        top_bar_layout.addItem(spacer_top)
+
         self.verticalLayout.addWidget(top_bar)
 
-        # Horizontal line separator
+        # Separatore orizzontale
         self.line_top = QtWidgets.QFrame(parent=self.centralwidget)
         self.line_top.setFrameShape(QtWidgets.QFrame.Shape.HLine)
         self.line_top.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
         self.line_top.setObjectName("line_top")
         self.verticalLayout.addWidget(self.line_top)
 
-        # Main content layout
+        # Layout principale del contenuto
         self.main_content = QtWidgets.QWidget(parent=self.centralwidget)
         self.gridLayout = QtWidgets.QGridLayout(self.main_content)
         self.gridLayout.setObjectName("gridLayout")
