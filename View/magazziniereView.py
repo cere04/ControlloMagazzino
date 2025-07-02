@@ -28,9 +28,9 @@ class FinestraM(QWidget):
         top_bar_layout = QHBoxLayout(top_bar)
         top_bar_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Bottone menu a tendina a sinistra (dimensioni ottimizzate)
+        # Bottone menu a tendina a sinistra
         self.menu_button = QPushButton("☰")
-        self.menu_button.setFixedSize(45, 35)  # Dimensioni leggermente ridotte
+        self.menu_button.setFixedSize(40, 35)
         self.menu_button.setStyleSheet("""
             QPushButton {
                 border: none;

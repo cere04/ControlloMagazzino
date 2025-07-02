@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from typing import List, Dict, Any
-from zipimport import path_sep
+# from zipimport import path_sep
 
 
 def letturaDatabaseArticoli(nome_file: str) -> List[Dict[str, str]]:

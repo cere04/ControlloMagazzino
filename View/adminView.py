@@ -202,35 +202,37 @@ class adminWindow(QObject):
     def setupUi(self, MainWindow, user_data):
         self.user_data = user_data
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1300, 860)  # Altezza aumentata per la top bar
-        MainWindow.setMinimumSize(QtCore.QSize(1200, 860))
+        MainWindow.resize(1300, 800)
+        MainWindow.setMinimumSize(QtCore.QSize(1300, 800))
 
         MainWindow.setStyleSheet(STYLESHEET)
 
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName("verticalLayout")
 
         # ---------- TOP BAR A SINISTRA ----------
         top_bar = QtWidgets.QFrame(parent=self.centralwidget)
-        top_bar.setMaximumHeight(50)
+        top_bar.setMaximumHeight(45)  # Aumentato per evitare tagli
         top_bar_layout = QtWidgets.QHBoxLayout(top_bar)
-        top_bar_layout.setContentsMargins(10, 0, 10, 0)
+        top_bar_layout.setContentsMargins(10, 5, 10, 5)  # Aggiunto padding verticale
         top_bar_layout.setSpacing(0)
 
-        # Pulsante menu a SINISTRA
+        # Menu button a sinistra
         self.menu_button = QtWidgets.QPushButton(parent=top_bar)
         self.menu_button.setText("☰")
-        self.menu_button.setFixedSize(45, 35)
+        self.menu_button.setFixedSize(40, 35)
         self.menu_button.setStyleSheet("""
             QPushButton {
                 border: none;
                 background: transparent;
                 color: #0F4C81;
-                font-size: 20px;
+                font-size: 20px;  
                 font-weight: bold;
-                qproperty-icon: none;  
+                padding: 0;
             }
             QPushButton:hover {
                 color: #1666AA;
@@ -248,27 +250,22 @@ class adminWindow(QObject):
 
         self.verticalLayout.addWidget(top_bar)
 
-        # Separatore orizzontale
-        self.line_top = QtWidgets.QFrame(parent=self.centralwidget)
-        self.line_top.setFrameShape(QtWidgets.QFrame.Shape.HLine)
-        self.line_top.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
-        self.line_top.setObjectName("line_top")
-        self.verticalLayout.addWidget(self.line_top)
-
-        # Layout principale del contenuto
+        # Contenuto principale
         self.main_content = QtWidgets.QWidget(parent=self.centralwidget)
         self.gridLayout = QtWidgets.QGridLayout(self.main_content)
-        self.gridLayout.setObjectName("gridLayout")
+        self.gridLayout.setContentsMargins(10, 0, 10, 10)  # Ridotto margine superiore
+        self.gridLayout.setSpacing(10)
         self.verticalLayout.addWidget(self.main_content)
 
-        # Rest of the UI components
+        # Frame sinistro (aggiunte)
         self.frame = QtWidgets.QFrame(parent=self.main_content)
-        self.frame.setMaximumSize(QtCore.QSize(240, 16777215))
         self.frame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
         self.frame.setObjectName("frame")
         self.formLayout_2 = QtWidgets.QFormLayout(self.frame)
         self.formLayout_2.setObjectName("formLayout_2")
+
+        # Aggiungi Vendita
         self.label_9 = QtWidgets.QLabel(parent=self.frame)
         self.label_9.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_9.setObjectName("label_9")
@@ -302,9 +299,11 @@ class adminWindow(QObject):
         self.pushButton.setObjectName("pushButton")
         self.pushButton.clicked.connect(self.aggiuntaVendita)
         self.formLayout_2.setWidget(4, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton)
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+        spacerItem = QtWidgets.QSpacerItem(40, 10, QtWidgets.QSizePolicy.Policy.Expanding,
                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout_2.setItem(5, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem)
+
+        # Aggiungi Giacenza
         self.label_8 = QtWidgets.QLabel(parent=self.frame)
         self.label_8.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_8.setObjectName("label_8")
@@ -329,9 +328,11 @@ class adminWindow(QObject):
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.clicked.connect(self.aggiuntaGiacenza)
         self.formLayout_2.setWidget(9, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_2)
-        spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+        spacerItem1 = QtWidgets.QSpacerItem(40, 10, QtWidgets.QSizePolicy.Policy.Expanding,
                                             QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout_2.setItem(10, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem1)
+
+        # Aggiungi Articolo
         self.label_10 = QtWidgets.QLabel(parent=self.frame)
         self.label_10.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_10.setObjectName("label_10")
@@ -369,9 +370,30 @@ class adminWindow(QObject):
         self.pushButton_3.setObjectName("pushButton_3")
         self.pushButton_3.clicked.connect(self.aggiuntaArticolo)
         self.formLayout_2.setWidget(15, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_3)
+
+        # Elimina Articolo (spostato qui)
+        spacerItem5 = QtWidgets.QSpacerItem(40, 10, QtWidgets.QSizePolicy.Policy.Expanding,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
+        self.formLayout_2.setItem(16, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem5)
+        self.label_28 = QtWidgets.QLabel(parent=self.frame)
+        self.label_28.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
+        self.label_28.setObjectName("label_28")
+        self.formLayout_2.setWidget(17, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.label_28)
+        self.label_29 = QtWidgets.QLabel(parent=self.frame)
+        self.label_29.setObjectName("label_29")
+        self.formLayout_2.setWidget(18, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_29)
+        self.lineEdit_18 = QtWidgets.QLineEdit(parent=self.frame)
+        self.lineEdit_18.setObjectName("lineEdit_18")
+        self.formLayout_2.setWidget(18, QtWidgets.QFormLayout.ItemRole.FieldRole, self.lineEdit_18)
+        self.pushButton_7 = QtWidgets.QPushButton(parent=self.frame)
+        self.pushButton_7.setObjectName("pushButton_7")
+        self.pushButton_7.clicked.connect(self.eliminaArticolo)
+        self.formLayout_2.setWidget(19, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_7)
+
         self.gridLayout.addWidget(self.frame, 1, 2, 3, 1)
+
+        # Frame destro (modifiche)
         self.frame_2 = QtWidgets.QFrame(parent=self.main_content)
-        self.frame_2.setMaximumSize(QtCore.QSize(240, 16777215))
         self.frame_2.setStyleSheet("QFrame#frame {\n"
                                    "    background-color: #ffffff;\\n\n"
                                    "    border-radius: 12px;\\n\n"
@@ -384,6 +406,8 @@ class adminWindow(QObject):
         self.frame_2.setObjectName("frame_2")
         self.formLayout = QtWidgets.QFormLayout(self.frame_2)
         self.formLayout.setObjectName("formLayout")
+
+        # Modifica Vendita
         self.label = QtWidgets.QLabel(parent=self.frame_2)
         self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label.setObjectName("label")
@@ -423,6 +447,11 @@ class adminWindow(QObject):
         self.pushButton_4.setObjectName("pushButton_4")
         self.pushButton_4.clicked.connect(self.modificaVendita)
         self.formLayout.setWidget(5, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_4)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 10, QtWidgets.QSizePolicy.Policy.Expanding,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
+        self.formLayout.setItem(6, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem2)
+
+        # Modifica Giacenza
         self.label_17 = QtWidgets.QLabel(parent=self.frame_2)
         self.label_17.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_17.setObjectName("label_17")
@@ -449,6 +478,11 @@ class adminWindow(QObject):
         self.pushButton_5.setObjectName("pushButton_5")
         self.pushButton_5.clicked.connect(self.modificaGiacenza)
         self.formLayout.setWidget(11, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_5)
+        spacerItem3 = QtWidgets.QSpacerItem(40, 10, QtWidgets.QSizePolicy.Policy.Expanding,
+                                            QtWidgets.QSizePolicy.Policy.Minimum)
+        self.formLayout.setItem(12, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem3)
+
+        # Modifica Articolo
         self.label_21 = QtWidgets.QLabel(parent=self.frame_2)
         self.label_21.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_21.setObjectName("label_21")
@@ -486,41 +520,21 @@ class adminWindow(QObject):
         self.pushButton_6.setObjectName("pushButton_6")
         self.pushButton_6.clicked.connect(self.modificaArticolo)
         self.formLayout.setWidget(17, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_6)
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                            QtWidgets.QSizePolicy.Policy.Minimum)
-        self.formLayout.setItem(6, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem2)
-        spacerItem3 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
-                                            QtWidgets.QSizePolicy.Policy.Minimum)
-        self.formLayout.setItem(12, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem3)
-        spacerItem4 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
+        spacerItem4 = QtWidgets.QSpacerItem(40, 10, QtWidgets.QSizePolicy.Policy.Expanding,
                                             QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout.setItem(18, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem4)
-        self.label_28 = QtWidgets.QLabel(parent=self.frame_2)
-        self.label_28.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
-        self.label_28.setObjectName("label_28")
-        self.formLayout.setWidget(19, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.label_28)
-        self.label_29 = QtWidgets.QLabel(parent=self.frame_2)
-        self.label_29.setObjectName("label_29")
-        self.formLayout.setWidget(20, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_29)
-        self.lineEdit_18 = QtWidgets.QLineEdit(parent=self.frame_2)
-        self.lineEdit_18.setObjectName("lineEdit_18")
-        self.formLayout.setWidget(20, QtWidgets.QFormLayout.ItemRole.FieldRole, self.lineEdit_18)
-        self.pushButton_7 = QtWidgets.QPushButton(parent=self.frame_2)
-        self.pushButton_7.setObjectName("pushButton_7")
-        self.pushButton_7.clicked.connect(self.eliminaArticolo)
-        self.formLayout.setWidget(21, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_7)
+
         self.gridLayout.addWidget(self.frame_2, 1, 3, 3, 1)
-        self.line = QtWidgets.QFrame(parent=self.main_content)
-        self.line.setFrameShape(QtWidgets.QFrame.Shape.HLine)
-        self.line.setFrameShadow(QtWidgets.QFrame.Shadow.Sunken)
-        self.line.setObjectName("line")
-        self.gridLayout.addWidget(self.line, 0, 0, 1, 4)
+
+        # Area grafico e filtri
         self.widget = QtWidgets.QWidget(parent=self.main_content)
         self.widget.setMinimumSize(QtCore.QSize(0, 0))
         self.widget.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.widget.setObjectName("widget")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.widget)
         self.gridLayout_2.setObjectName("gridLayout_2")
+
+        # Barra filtri
         self.frame_3 = QtWidgets.QFrame(parent=self.widget)
         self.frame_3.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
@@ -528,10 +542,14 @@ class adminWindow(QObject):
         self.frame_3.setMinimumSize(16777215, 100)
         self.frame_3.setMaximumSize(16777215, 100)
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.frame_3)
+        self.horizontalLayout.setContentsMargins(10, 5, 10, 5)  # Padding ridotto
+        self.horizontalLayout.setSpacing(10)
         self.horizontalLayout.setObjectName("horizontalLayout")
+
         self.label_25 = QtWidgets.QLabel(parent=self.frame_3)
         self.label_25.setObjectName("label_25")
         self.horizontalLayout.addWidget(self.label_25)
+
         self.comboBox = QtWidgets.QComboBox(parent=self.frame_3)
         self.comboBox.setMinimumSize(QtCore.QSize(100, 0))
         self.comboBox.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -540,9 +558,11 @@ class adminWindow(QObject):
         self.comboBox.addItem("uomo")
         self.comboBox.addItem("donna")
         self.horizontalLayout.addWidget(self.comboBox)
+
         self.label_26 = QtWidgets.QLabel(parent=self.frame_3)
         self.label_26.setObjectName("label_26")
         self.horizontalLayout.addWidget(self.label_26)
+
         self.comboBox_2 = QtWidgets.QComboBox(parent=self.frame_3)
         self.comboBox_2.setMinimumSize(QtCore.QSize(100, 0))
         self.comboBox_2.setMaximumSize(QtCore.QSize(100, 16777215))
@@ -552,34 +572,38 @@ class adminWindow(QObject):
         self.comboBox_2.addItem("borsa")
         self.comboBox_2.addItem("abbigliamento")
         self.horizontalLayout.addWidget(self.comboBox_2)
+
         self.label_27 = QtWidgets.QLabel(parent=self.frame_3)
         self.label_27.setObjectName("label_27")
         self.horizontalLayout.addWidget(self.label_27)
+
         self.lineEdit_17 = QtWidgets.QLineEdit(parent=self.frame_3)
         self.lineEdit_17.setMinimumSize(QtCore.QSize(100, 0))
         self.lineEdit_17.setMaximumSize(QtCore.QSize(100, 16777215))
         self.lineEdit_17.setObjectName("lineEdit_17")
         self.horizontalLayout.addWidget(self.lineEdit_17)
+
         self.label_30 = QtWidgets.QLabel(parent=self.frame_3)
         self.label_30.setObjectName("label_30")
         self.horizontalLayout.addWidget(self.label_30)
+
         self.comboBox_3 = QtWidgets.QComboBox(parent=self.frame_3)
         self.comboBox_3.setMinimumSize(QtCore.QSize(100, 0))
         self.comboBox_3.setMaximumSize(QtCore.QSize(100, 16777215))
         self.comboBox_3.setObjectName("comboBox_3")
-
         self.comboBox_3.addItem(" ")
         self.comboBox_3.addItem("Italia")
         self.comboBox_3.addItem("Germania")
         self.comboBox_3.addItem("Francia")
         self.comboBox_3.addItem("Spagna")
         self.horizontalLayout.addWidget(self.comboBox_3)
+
         self.pushButton_8 = QtWidgets.QPushButton(parent=self.frame_3)
         self.pushButton_8.setObjectName("pushButton_8")
         self.pushButton_8.clicked.connect(self.applicaFiltri)
         self.horizontalLayout.addWidget(self.pushButton_8)
 
-        # Aggiunto il pulsante Reset
+        # Pulsante Reset
         self.btn_reset = QtWidgets.QPushButton(parent=self.frame_3)
         self.btn_reset.setObjectName("btn_reset")
         self.btn_reset.setText("Reset")
@@ -587,11 +611,14 @@ class adminWindow(QObject):
         self.horizontalLayout.addWidget(self.btn_reset)
 
         self.gridLayout_2.addWidget(self.frame_3, 0, 1, 1, 1)
+
+        # Grafico
         self.graphicsView = BarChartCanvas(self.widget)
         self.graphicsView.setMaximumSize(QtCore.QSize(16777215, 700))
         self.graphicsView.setStyleSheet("none")
         self.graphicsView.setObjectName("graphicsView")
         self.gridLayout_2.addWidget(self.graphicsView, 1, 1, 1, 1)
+
         self.gridLayout.addWidget(self.widget, 1, 0, 3, 2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
@@ -610,6 +637,34 @@ class adminWindow(QObject):
 
     def show_user_menu(self):
         menu = QMenu(self.centralwidget)
+        menu.setStyleSheet("""
+            QMenu {
+                background-color: white;
+                border: 1px solid #e0e6ed;
+                border-radius: 6px;
+                padding: 6px;
+                min-width: 220px;
+                font-size: 13px;
+            }
+            QMenu::item {
+                padding: 6px 20px 6px 12px;
+                min-height: 28px;
+            }
+            QMenu::item:disabled {
+                color: #2d3748;
+                background: transparent;
+                font-weight: bold;
+            }
+            QMenu::item:selected {
+                background-color: #0F4C81;
+                color: white;
+            }
+            QMenu::separator {
+                height: 1px;
+                background: #e0e6ed;
+                margin: 4px 0;
+            }
+        """)
 
         # Informazioni utente (non cliccabili)
         nome_completo = QAction(f"Nome: {self.user_data['nome']} {self.user_data['cognome']}", self.centralwidget)
@@ -631,10 +686,7 @@ class adminWindow(QObject):
         logout_action.triggered.connect(self.logout)
         menu.addAction(logout_action)
 
-        # Applica stile al menu
-        menu.setStyleSheet(self.centralwidget.styleSheet())
-
-        # Mostra menu sotto il bottone
+        # Mostra menu sotto il bottone (a sinistra)
         menu.exec(self.menu_button.mapToGlobal(self.menu_button.rect().bottomLeft()))
 
     def logout(self):
@@ -642,7 +694,7 @@ class adminWindow(QObject):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Pannello Amministratore"))
         self.label_9.setText(_translate("MainWindow", "Aggiungi Vendita"))
         self.label_5.setText(_translate("MainWindow", "SKU"))
         self.label_6.setText(_translate("MainWindow", "Quantità"))
@@ -657,6 +709,9 @@ class adminWindow(QObject):
         self.label_12.setText(_translate("MainWindow", "Genere"))
         self.label_13.setText(_translate("MainWindow", "Tipologia"))
         self.pushButton_3.setText(_translate("MainWindow", "Conferma Operazione"))
+        self.label_28.setText(_translate("MainWindow", "Elimina Articolo"))
+        self.label_29.setText(_translate("MainWindow", "SKU"))
+        self.pushButton_7.setText(_translate("MainWindow", "Conferma Operazione"))
         self.label.setText(_translate("MainWindow", "Modifica Vendita"))
         self.label_15.setText(_translate("MainWindow", "ID Operazione"))
         self.label_2.setText(_translate("MainWindow", "SKU"))
@@ -676,10 +731,7 @@ class adminWindow(QObject):
         self.label_25.setText(_translate("MainWindow", "Genere"))
         self.label_26.setText(_translate("MainWindow", "Tipologia"))
         self.label_27.setText(_translate("MainWindow", "SKU"))
-        self.label_28.setText(_translate("MainWindow", "Elimina Articolo"))
-        self.label_29.setText(_translate("MainWindow", "SKU"))
         self.label_30.setText(_translate("MainWindow", "Paese"))
-        self.pushButton_7.setText(_translate("MainWindow", "Conferma Operazione"))
         self.pushButton_8.setText(_translate("MainWindow", "Applica Filtri"))
         self.menuControlloMagazzino.setTitle(_translate("MainWindow", "ControlloMagazzino"))
         self.menuControlloMagazzino.menuAction().setVisible(False)

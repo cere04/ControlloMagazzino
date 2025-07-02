@@ -30,7 +30,7 @@ class FinestraC(QWidget):
 
         # Bottone menu a tendina a sinistra (dimensioni ottimizzate)
         self.menu_button = QPushButton("☰")
-        self.menu_button.setFixedSize(45, 35)
+        self.menu_button.setFixedSize(40, 35)
         self.menu_button.setStyleSheet("""
             QPushButton {
                 border: none;

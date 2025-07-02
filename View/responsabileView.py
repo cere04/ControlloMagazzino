@@ -204,7 +204,7 @@ class FinestraRC(QWidget):
 
         # Bottone menu a tendina a sinistra
         self.menu_button = QPushButton("☰")
-        self.menu_button.setFixedSize(45, 35)  # Dimensioni leggermente ridotte
+        self.menu_button.setFixedSize(40, 35)  # Dimensioni leggermente ridotte
         self.menu_button.setStyleSheet("""
                     QPushButton {
                         border: none;
