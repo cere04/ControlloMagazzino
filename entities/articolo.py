@@ -1,5 +1,5 @@
 from entities.operazione import letturaDatabaseArticoli
-from entities.enums import TipologiaArticolo, GenereArticolo, UnitaMisura
+from entities.enums import TipologiaArticolo, GenereArticolo
 
 
 class Articolo:
@@ -13,7 +13,7 @@ class Articolo:
         self.genere = genere
 
     def aggiungiArticolo(self):
-        '''metodo per l'aggiunta di un nuovo articolo nel database articoli'''
+        """metodo per l'aggiunta di un nuovo articolo nel database articoli"""
 
         lista_articoli=letturaDatabaseArticoli("Model/databaseArticoli.txt")
 
@@ -33,7 +33,8 @@ class Articolo:
             print("errore articolo gia esistente")
 
     def modificaArticolo(self, sku_set, genere, tipologia):
-        '''metodo per la modifica di un articolo presente all'interno del database articoli'''
+        """metodo per la modifica di un articolo presente all'interno del database articoli"""
+
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         articolo_trovato = False
 
@@ -67,6 +68,8 @@ class Articolo:
             raise ValueError(f"SKU articolo {sku_set} non trovato")
 
     def eliminaArticolo(self, sku_set):
+        """metodo per l'eliminazione di un articolo presente all'interno del database articoli"""
+
         lista_articoli=letturaDatabaseArticoli("Model/databaseArticoli.txt")
 
         lista_articoli_new=[]

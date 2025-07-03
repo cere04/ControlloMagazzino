@@ -4,6 +4,7 @@ from typing import List, Dict, Any
 
 
 def letturaDatabaseUtenti(nome_file: str)-> List[Dict[str, str]]:
+    """metodo per la lettura del database degli utenti"""
 
     lista_utenti=[]
 
@@ -33,58 +34,55 @@ def letturaDatabaseUtenti(nome_file: str)-> List[Dict[str, str]]:
     return lista_utenti
 
 def get_utente_by_id(id: str, lista_utenti: List[Dict[str, Any]]) -> dict[str, Any] | None:
+    """metodo che restituisce tutte le informazioni dell'utente in base al suo id"""
+
     for utente in lista_utenti:
         if utente['id'] == id:
             return utente
     return None
 
-class Utente(ABC):
-    def __init__(self,
-                 nome: str,
-                 cognome: str,
-                 codiceDipendente: str,
-                 livelloAccesso: RuoloUtente
-                 ):
-        self.nome = nome
-        self.cognome = cognome
-        self.codiceDipendente = codiceDipendente
-        self.livelloAccesso = livelloAccesso
-
-    @abstractmethod
-    def metodoAstratto(self):
-        pass
-
-
-class Admin(Utente):
-    def __init__(self,
-                 nome : str,
-                 cognome : str,
-                 codiceDipendente : str
-    ):
-        super().__init__(nome, cognome, codiceDipendente, RuoloUtente.ADMIN)
-
-
-class ResponsabileCommerciale(Utente):
-    def __init__(self,
-                 nome:str,
-                 cognome:str,
-                 codiceDipendente:str
-                 ):
-        super().__init__(nome, cognome, codiceDipendente, RuoloUtente.RESPONSABILE_COMMERCIALE)
-
-class Commesso(Utente):
-    def __init__(self,
-                 nome:str,
-                 cognome:str,
-                 codiceDipendente:str
-                 ):
-        super().__init__(nome, cognome, codiceDipendente, RuoloUtente.COMMESSO)
-
-class Magazziniere(Utente):
-    def __init__(self,
-                 nome:str,
-                 cognome:str,
-                 codiceDipendente:str
-                 ):
-        super().__init__(nome, cognome, codiceDipendente, RuoloUtente.MAGAZZINIERE)
+# class Utente(ABC):
+#     def __init__(self,
+#                  nome: str,
+#                  cognome: str,
+#                  codiceDipendente: str,
+#                  livelloAccesso: RuoloUtente
+#                  ):
+#         self.nome = nome
+#         self.cognome = cognome
+#         self.codiceDipendente = codiceDipendente
+#         self.livelloAccesso = livelloAccesso
+#
+# class Admin(Utente):
+#     def __init__(self,
+#                  nome: str,
+#                  cognome: str,
+#                  codiceDipendente : str
+#     ):
+#         super().__init__(nome, cognome, codiceDipendente, RuoloUtente.ADMIN)
+#
+#
+# class ResponsabileCommerciale(Utente):
+#     def __init__(self,
+#                  nome:str,
+#                  cognome:str,
+#                  codiceDipendente:str
+#                  ):
+#         super().__init__(nome, cognome, codiceDipendente, RuoloUtente.RESPONSABILE_COMMERCIALE)
+#
+# class Commesso(Utente):
+#     def __init__(self,
+#                  nome:str,
+#                  cognome:str,
+#                  codiceDipendente:str
+#                  ):
+#         super().__init__(nome, cognome, codiceDipendente, RuoloUtente.COMMESSO)
+#
+# class Magazziniere(Utente):
+#     def __init__(self,
+#                  nome:str,
+#                  cognome:str,
+#                  codiceDipendente:str
+#                  ):
+#         super().__init__(nome, cognome, codiceDipendente, RuoloUtente.MAGAZZINIERE)
 

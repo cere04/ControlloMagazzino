@@ -1,6 +1,6 @@
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel,
+    QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton,
     QMessageBox, QGroupBox, QFormLayout, QSpinBox, QComboBox, QMenu,
     QSpacerItem, QSizePolicy, QFrame
 )
@@ -17,18 +17,17 @@ class FinestraC(QWidget):
         self.setWindowTitle("Finestra dei Commessi")
         self.setGeometry(200, 200, 700, 300)
 
-        # Layout principale
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(20, 15, 20, 20)
         main_layout.setSpacing(15)
         self.setLayout(main_layout)
 
-        # ---------- TOP BAR CON MENU UTENTE ----------
+        # ---------- top bar ----------
         top_bar = QFrame()
         top_bar_layout = QHBoxLayout(top_bar)
         top_bar_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Bottone menu a tendina a sinistra (dimensioni ottimizzate)
+        # ---------- bottone menu ----------
         self.menu_button = QPushButton("☰")
         self.menu_button.setFixedSize(40, 35)
         self.menu_button.setStyleSheet("""
@@ -49,13 +48,12 @@ class FinestraC(QWidget):
         self.menu_button.clicked.connect(self.show_user_menu)
         top_bar_layout.addWidget(self.menu_button)
 
-        # Spacer per spingere tutto il resto a destra
         spacer = QSpacerItem(20, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         top_bar_layout.addSpacerItem(spacer)
 
         main_layout.addWidget(top_bar)
 
-        # ---------- CONTENUTO PRINCIPALE ----------
+        # ---------- contenuto principale ----------
         content_layout = QHBoxLayout()
         content_layout.setSpacing(20)
 
@@ -66,18 +64,16 @@ class FinestraC(QWidget):
         self.sku_av = QLineEdit()
         self.sku_av.setPlaceholderText("Inserisci SKU")
 
-        # SpinBox per la quantità invece di QLineEdit
         self.numero_av = QSpinBox()
         self.numero_av.setMinimum(1)
         self.numero_av.setMaximum(10000)
 
-        # ComboBox per il paese con i paesi specificati
         self.paese_av = QComboBox()
         self.paese_av.addItem("Italia")
         self.paese_av.addItem("Germania")
         self.paese_av.addItem("Francia")
         self.paese_av.addItem("Spagna")
-        self.paese_av.setCurrentIndex(-1)  # Nessuna selezione iniziale
+        self.paese_av.setCurrentIndex(-1)
 
         nuovaVenditaLayout.addRow("SKU:", self.sku_av)
         nuovaVenditaLayout.addRow("Quantità:", self.numero_av)
@@ -90,7 +86,7 @@ class FinestraC(QWidget):
         nuovaVenditaBox.setLayout(nuovaVenditaLayout)
         content_layout.addWidget(nuovaVenditaBox)
 
-        # ---------- SEZIONE MODIFICA VENDITA ----------
+        # ---------- form modifica vendita ----------
         modificaVenditaBox = QGroupBox("Modifica Vendita")
         modificaVenditaLayout = QFormLayout()
         modificaVenditaLayout.setSpacing(15)
@@ -101,18 +97,16 @@ class FinestraC(QWidget):
         self.sku_mv = QLineEdit()
         self.sku_mv.setPlaceholderText("SKU")
 
-        # SpinBox per la quantità invece di QLineEdit
         self.numero_mv = QSpinBox()
         self.numero_mv.setMinimum(1)
         self.numero_mv.setMaximum(10000)
 
-        # ComboBox per il paese con i paesi specificati
         self.paese_mv = QComboBox()
         self.paese_mv.addItem("Italia")
         self.paese_mv.addItem("Germania")
         self.paese_mv.addItem("Francia")
         self.paese_mv.addItem("Spagna")
-        self.paese_mv.setCurrentIndex(-1)  # Nessuna selezione iniziale
+        self.paese_mv.setCurrentIndex(-1)
 
         modificaVenditaLayout.addRow("ID Vendita:", self.id_Vendita)
         modificaVenditaLayout.addRow("SKU:", self.sku_mv)
@@ -128,7 +122,6 @@ class FinestraC(QWidget):
 
         main_layout.addLayout(content_layout)
 
-        # Applica lo stile
         self.apply_style()
 
         self.show()
@@ -286,9 +279,10 @@ class FinestraC(QWidget):
         """)
 
     def show_user_menu(self):
+        """metodo per la visualizzazione dei dati utente nel menu a tendina"""
+
         menu = QMenu(self)
 
-        # Informazioni utente (non cliccabili)
         nome_completo = QAction(f"Nome: {self.user_data['nome']} {self.user_data['cognome']}", self)
         nome_completo.setEnabled(False)
         menu.addAction(nome_completo)
@@ -303,27 +297,28 @@ class FinestraC(QWidget):
 
         menu.addSeparator()
 
-        # Azione logout
+        # ---------- logout button ----------
         logout_action = QAction("Logout", self)
         logout_action.triggered.connect(self.logout)
         menu.addAction(logout_action)
 
-        # Applica stile al menu
         menu.setStyleSheet(self.styleSheet())
 
-        # Mostra menu sotto il bottone
         menu.exec(self.menu_button.mapToGlobal(self.menu_button.rect().bottomLeft()))
 
     def logout(self):
+        """metodo per il logout"""
+
         self.logout_requested.emit()
         self.close()
 
     def aggiunta(self):
+        """ metodo lettura dati in input per l'aggiunta di una vendita"""
+
         SKU_AV = self.sku_av.text().strip()
         N_AV = self.numero_av.value()
         P_AV = self.paese_av.currentText().strip()
 
-        # Controllo campi vuoti
         if not SKU_AV:
             QMessageBox.critical(
                 self,
@@ -340,7 +335,6 @@ class FinestraC(QWidget):
             )
             return
 
-        # Verifica esistenza SKU
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         sku_exists = any(art['sku'] == SKU_AV for art in lista_articoli)
 
@@ -357,7 +351,6 @@ class FinestraC(QWidget):
             O = Operazione()
             O.aggiungiVendita(SKU_AV, N_AV, P_AV)
 
-            # Messaggio di successo
             QMessageBox.information(
                 self,
                 'Successo',
@@ -367,7 +360,6 @@ class FinestraC(QWidget):
                 f'Paese: {P_AV}'
             )
 
-            # Reset campi
             self.sku_av.clear()
             self.numero_av.setValue(1)
             self.paese_av.setCurrentIndex(-1)
@@ -380,12 +372,13 @@ class FinestraC(QWidget):
             )
 
     def modifica_v_(self):
+        """ metodo lettura dati in input per la modifica di una vendita"""
+
         ID_OP = self.id_Vendita.text().strip()
         SKU_MV = self.sku_mv.text().strip()
         QTA_MV = self.numero_mv.value()
         PAESE_MV = self.paese_mv.currentText().strip()
 
-        # Controllo campi vuoti
         if not ID_OP:
             QMessageBox.critical(
                 self,
@@ -410,7 +403,6 @@ class FinestraC(QWidget):
             )
             return
 
-        # Controllo ID vendita valido
         try:
             id_vendita = int(ID_OP)
             if id_vendita <= 0:
@@ -424,7 +416,6 @@ class FinestraC(QWidget):
             self.id_Vendita.clear()
             return
 
-        # Verifica esistenza SKU
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         sku_exists = any(art['sku'] == SKU_MV for art in lista_articoli)
 
@@ -454,7 +445,6 @@ class FinestraC(QWidget):
                     "Nessuna vendita trovata con l'ID specificato"
                 )
             else:
-                # Messaggio di successo
                 QMessageBox.information(
                     self,
                     'Successo',
@@ -464,8 +454,6 @@ class FinestraC(QWidget):
                     f'Quantità: {QTA_MV}\n'
                     f'Paese: {PAESE_MV}'
                 )
-
-                # Reset campi
                 self.id_Vendita.clear()
                 self.sku_mv.clear()
                 self.numero_mv.setValue(1)

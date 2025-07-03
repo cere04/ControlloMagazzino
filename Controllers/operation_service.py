@@ -1,30 +1,21 @@
 from typing import List, Dict, Any
-from entities.operazione import letturaDatabaseOperazioni, letturaDatabaseArticoli
 
 
 def calcolaVenditeTotali(lista_operazioni: List[Dict[str, any]]) -> List[int]:
-    """
-    Calcola le vendite totali per ogni mese dell'anno
-
-    Args:
-        lista_operazioni: lista delle operazioni dal database
-
-    Returns:
-        Una lista con 12 elementi (uno per mese) contenente i totali delle vendite
-    """
+    """Calcola le vendite totali per ogni mese dell'anno"""
 
     vendite_totali = [0] * 12
 
     for op in lista_operazioni:
-        # Considera solo le operazioni di vendita (vendita positiva)
         if op['vendita'] > 0:
-            mese = op['data'].month - 1  # Converti in indice (0-11)
+            mese = op['data'].month - 1
             vendita = op['vendita']
             vendite_totali[mese] += vendita
 
     return vendite_totali
 
 def ordinamentoOperazioni(lista_operazioni: List[Dict[str, any]], mese_set):
+    """Le operazioni vengono ordinate in base alla data"""
 
     if mese_set == 2:
         giorni_mese = 28
@@ -38,29 +29,25 @@ def ordinamentoOperazioni(lista_operazioni: List[Dict[str, any]], mese_set):
     for op in lista_operazioni:
         data_op = op['data']
 
-        # Estrae mese e giorno dalla data
         mese_op = int(data_op.strftime("%m"))
         giorno_op = int(data_op.strftime("%d"))
 
-        # Controlla se l'operazione appartiene al mese specificato
         if mese_op != mese_set:
             continue
 
-        # Verifica che il giorno sia valido per il mese
         if giorno_op < 1 or giorno_op > giorni_mese:
             continue
 
-        # Aggiunge la giacenza al giorno corrispondente
         operazioni_ordinate[giorno_op - 1] += op['giacenza']
 
     return operazioni_ordinate
 
 def giacenzaMediaMensile(operazioni_ordinate, mese_set) -> List[int]:
-    '''metodo per il calcolo della giacenza media'''
+    """metodo per il calcolo della giacenza media mensile"""
 
     totale=0
     somma_corrente=0
-    ultimo_valore = 0
+    media_round=0
 
     if mese_set == 2:
         giorni_mese = 28
@@ -81,6 +68,7 @@ def giacenzaMediaMensile(operazioni_ordinate, mese_set) -> List[int]:
     return media_round
 
 def indiceRotazione(vendite_totali, media_round):
+    """metodo per il calcolo del'indice di rotazione mensile'"""
     indice_rotazione_round=[0]*12
 
     for i in range(12):
@@ -89,17 +77,7 @@ def indiceRotazione(vendite_totali, media_round):
     return indice_rotazione_round
 
 def filtroSKU(lista_operazioni: List[Dict[str, any]], sku_list: List[str]) -> list[dict[str, Any]]:
-    """
-    Calcola le vendite totali per ogni mese dell'anno
-
-    Args:
-        operazioni: lista delle operazioni dal database
-
-    Returns:
-        Una lista con 12 elementi (uno per mese) contenente i totali delle vendite
-        :param lista_operazioni:
-        :param sku_list:
-    """
+    """metodo per filtrare le operazioni tramite sku"""
 
     if not sku_list:
         return lista_operazioni
@@ -108,19 +86,8 @@ def filtroSKU(lista_operazioni: List[Dict[str, any]], sku_list: List[str]) -> li
     return[op for op in lista_operazioni if op['sku'] in sku_set]
 
 def filtroGenere(lista_operazioni: List[Dict[str, any]], lista_articoli: List[Dict[str, any]], generi: List[str]) -> List[Dict[str, any]]:
-    """
-    Filtra le operazioni per genere (uomo/donna)
+    """metodo per filtrare le operazioni per genere"""
 
-    Args:
-        lista_operazioni: lista delle operazioni da filtrare
-        generi: lista di generi da includere ('uomo', 'donna')
-
-    Returns:
-        Lista filtrata delle operazioni
-        :param generi:
-        :param lista_operazioni:
-        :param lista_articoli:
-    """
     if not generi:
         return lista_operazioni
 
@@ -133,19 +100,8 @@ def filtroGenere(lista_operazioni: List[Dict[str, any]], lista_articoli: List[Di
     return [op for op in lista_operazioni if op['sku'] in test]
 
 def filtroTipologia(lista_operazioni: List[Dict[str, any]], lista_articoli: List[Dict[str, any]], tipologie: List[str]) -> List[Dict[str, any]]:
-    """
-    Filtra le operazioni per genere (uomo/donna)
+    """metodo per filtrare le operazioni per tipologia"""
 
-    Args:
-        lista_operazioni: lista delle operazioni da filtrare
-        generi: lista di generi da includere ('uomo', 'donna')
-
-    Returns:
-        Lista filtrata delle operazioni
-        :param tipologie:
-        :param lista_operazioni:
-        :param lista_articoli:
-    """
     if not tipologie:
         return lista_operazioni
 
@@ -158,17 +114,8 @@ def filtroTipologia(lista_operazioni: List[Dict[str, any]], lista_articoli: List
     return [op for op in lista_operazioni if op['sku'] in test]
 
 def filtroZona(lista_operazioni: List[Dict[str, any]], zone: List[str]) -> list[dict[str, Any]]:
-    """
-    Calcola le vendite totali per ogni mese dell'anno
+    """metodo per filtrare le operazioni per zona"""
 
-    Args:
-        operazioni: lista delle operazioni dal database
-
-    Returns:
-        Una lista con 12 elementi (uno per mese) contenente i totali delle vendite
-        :param zone:
-        :param lista_operazioni:
-    """
 
     if not zone:
         return lista_operazioni
@@ -183,25 +130,7 @@ def filtraOperazioni(lista_operazioni: List[Dict[str, any]],
                      tipologie: List[str] = None,
                      zone: List[str] = None
                      ) -> List[Dict[str, any]]:
-    """
-    Applica tutti i filtri specificati alle operazioni
-
-    Args:
-        lista_operazioni: lista delle operazioni da filtrare
-        sku: lista di SKU da includere
-        generi: lista di generi da includere
-        tipologie: lista di tipologie da includere
-        zone: lista di zone da includere
-
-    Returns:
-        Lista filtrata delle operazioni
-        :param zone:
-        :param tipologie:
-        :param generi:
-        :param sku:
-        :param lista_operazioni:
-        :param lista_articoli:
-    """
+    """metodo utilizzato per scegliere quali dati filtrati visualizzare nel grafico"""
     filtrate = lista_operazioni
 
     if sku != ['']:

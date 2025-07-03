@@ -23,12 +23,12 @@ class FinestraM(QWidget):
         main_layout.setSpacing(15)
         self.setLayout(main_layout)
 
-        # ---------- TOP BAR CON MENU UTENTE ----------
+        # ---------- top bar ----------
         top_bar = QFrame()
         top_bar_layout = QHBoxLayout(top_bar)
         top_bar_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Bottone menu a tendina a sinistra
+        # ---------- bottone menu ----------
         self.menu_button = QPushButton("☰")
         self.menu_button.setFixedSize(40, 35)
         self.menu_button.setStyleSheet("""
@@ -49,17 +49,16 @@ class FinestraM(QWidget):
         self.menu_button.clicked.connect(self.show_user_menu)
         top_bar_layout.addWidget(self.menu_button)
 
-        # Spacer per spingere tutto il resto a destra
         spacer = QSpacerItem(20, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         top_bar_layout.addSpacerItem(spacer)
 
         main_layout.addWidget(top_bar)
 
-        # ---------- CONTENUTO PRINCIPALE ----------
+        # ---------- contenuto principale ----------
         content_layout = QHBoxLayout()
         content_layout.setSpacing(20)
 
-        # ---------- SEZIONE NUOVA GIACENZA ----------
+        # ---------- form inserimento giacenza ----------
         nuovaGiacenzaBox = QGroupBox("Nuova Giacenza")
         nuovaGiacenzaLayout = QFormLayout()
         nuovaGiacenzaLayout.setSpacing(15)
@@ -81,7 +80,7 @@ class FinestraM(QWidget):
         nuovaGiacenzaBox.setLayout(nuovaGiacenzaLayout)
         content_layout.addWidget(nuovaGiacenzaBox)
 
-        # ---------- SEZIONE MODIFICA GIACENZA ----------
+        # ---------- form modifica giacenza ----------
         modificaBox = QGroupBox("Modifica Giacenza")
         modificaLayout = QFormLayout()
         modificaLayout.setSpacing(15)
@@ -109,7 +108,6 @@ class FinestraM(QWidget):
 
         main_layout.addLayout(content_layout)
 
-        # Applica lo stile
         self.apply_style()
 
         self.show()
@@ -234,9 +232,10 @@ class FinestraM(QWidget):
         """)
 
     def show_user_menu(self):
+        """metodo per la visualizzazione dei dati utente nel menu a tendina"""
+
         menu = QMenu(self)
 
-        # Informazioni utente (non cliccabili)
         nome_completo = QAction(f"Nome: {self.user_data['nome']} {self.user_data['cognome']}", self)
         nome_completo.setEnabled(False)
         menu.addAction(nome_completo)
@@ -251,23 +250,25 @@ class FinestraM(QWidget):
 
         menu.addSeparator()
 
-        # Azione logout
+        # ---------- logout button ----------
         logout_action = QAction("Logout", self)
         logout_action.triggered.connect(self.logout)
         menu.addAction(logout_action)
 
-        # Applica stile al menu
         menu.setStyleSheet(self.styleSheet())
 
-        # Mostra menu sotto il bottone
         menu.exec(self.menu_button.mapToGlobal(self.menu_button.rect().bottomLeft()))
 
 
     def logout(self):
+        """metodo per il logout"""
+
         self.logout_requested.emit()
         self.close()
 
     def aggiunta(self):
+        """ metodo lettura dati in input per l'aggiunta di una giacenza"""
+
         SKU_AG = self.sku_ag.text().strip()
         N_AG = self.numero_ag.value()
 
@@ -314,6 +315,8 @@ class FinestraM(QWidget):
             )
 
     def modifica_(self):
+        """ metodo lettura dati in input per la modifica di una giacenza"""
+
         ID_OP = self.id_Giacenza.text().strip()
         SKU_MG = self.sku_mg.text().strip()
         QTA_MG = self.numero_mg.value()

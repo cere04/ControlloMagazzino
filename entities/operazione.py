@@ -1,19 +1,11 @@
 import os
 from datetime import datetime
-from typing import List, Dict, Any
-# from zipimport import path_sep
+from typing import List, Dict
 
 
 def letturaDatabaseArticoli(nome_file: str) -> List[Dict[str, str]]:
-    """
-    Legge il file databaseArticoli.txt e restituisce una lista di dizionari
+    """metodo per la lettura del database degli articoli"""
 
-    Args:
-        nome_file: percorso del file da leggere
-
-    Returns:
-        Lista di dizionari con i dati degli articoli
-    """
     lista_articoli = []
 
     try:
@@ -42,18 +34,10 @@ def letturaDatabaseArticoli(nome_file: str) -> List[Dict[str, str]]:
 
 
 def letturaDatabaseOperazioni(nome_file: str) -> List[Dict[str, any]]:
-    """
-    Legge il file di database e restituisce una lista di dizionari con i dati
+    """metodo per la lettura del database degli articoli"""
 
-    Args:
-        nome_file: percorso del file da leggere
-
-    Returns:
-        Lista di dizionari con i dati delle operazioni
-    """
     lista_operazioni = []
 
-    # Verifica se il file esiste
     if not os.path.exists(nome_file):
         print(f"Errore: il file {nome_file} non esiste")
         return lista_operazioni
@@ -61,21 +45,17 @@ def letturaDatabaseOperazioni(nome_file: str) -> List[Dict[str, any]]:
     try:
         with open(nome_file, 'r') as file:
             for linea in file:
-                # Pulisci la linea e salta se vuota
                 linea = linea.strip("\n")
                 if not linea:
                     continue
 
-                # Dividi i campi
                 try:
                     campi = [campo.strip() for campo in linea.split(',')]
 
-                    # Verifica che ci siano tutti i campi necessari
                     if len(campi) != 6:
                         print(f"Errore formato nella linea: {linea}")
                         continue
 
-                    # Estrai e converti i campi
                     operazione = {
                         'sku': campi[0],
                         'vendita': int(campi[1]),
@@ -129,7 +109,8 @@ class Operazione:
         self.paese = paese
 
     def aggiungiVendita(self, sku, quantitaVendita, paese):
-        """Aggiunge una vendita al database"""
+        """metodo per l'aggiunta di una vendita al database operazioni"""
+
         lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         self.id_auto = max(op['idOperazione'] for op in lista_operazioni) + 1 if lista_operazioni else 1
         self.data_formatted = self.data.strftime("%d-%m-%Y")
@@ -145,7 +126,8 @@ class Operazione:
             file.write(line)
 
     def aggiungiGiacenza(self, sku, quantitaGiacenza):
-        """Aggiunge una vendita al database"""
+        """metodo per l'aggiunta di una giacenza al database operazioni"""
+
         lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         self.id_auto = max(op['idOperazione'] for op in lista_operazioni) + 1 if lista_operazioni else 1
         self.data_formatted = self.data.strftime("%d-%m-%Y")
@@ -161,6 +143,7 @@ class Operazione:
             file.write(line)
 
     def modificaGiacenza(self, id_set, sku_set, quantitaGiacenza, paese):
+        """metodo per la modifica di una giacenza all'interno del database operazioni"""
 
         lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         operazione_giacenza_trovata= False
@@ -178,7 +161,7 @@ class Operazione:
                     if sku_set != '':
                         op['sku'] = sku_set
                     if quantitaGiacenza != 0:
-                        op['giacenza'] = quantitaGiacenza  # Aggiornamento automatico
+                        op['giacenza'] = quantitaGiacenza
                     if paese is not None:
                         op['paese'] = paese
                     op['vendita']=0
@@ -211,6 +194,8 @@ class Operazione:
 
 
     def modificaVendita(self, id_set, sku_set, quantitaVendita, paese):
+        """metodo per la modifica di una vendita all'interno del database operazioni"""
+
         lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
         operazione_trovata= False
         tipo_op = False

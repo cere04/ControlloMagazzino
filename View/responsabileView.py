@@ -5,8 +5,7 @@ from PyQt6.QtCore import pyqtSignal
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
-from Controllers.operation_service import calcolaVenditeTotali, ordinamentoOperazioni, giacenzaMediaMensile, \
-    indiceRotazione
+from Controllers.operation_service import calcolaVenditeTotali, ordinamentoOperazioni, giacenzaMediaMensile, indiceRotazione
 from entities.operazione import letturaDatabaseOperazioni, letturaDatabaseArticoli
 import Controllers.operation_service as operation_service
 
@@ -131,13 +130,11 @@ class BarChartCanvas(FigureCanvas):
             border: 1px solid #e0e6ed;
         """)
 
-        # Dati iniziali
         self.plot_data()
 
     def plot_data(self, vendite=None, giacenze=None):
         mesi = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"]
 
-        # Se nessun dato fornito, carica quelli dal database
         if vendite is None or giacenze is None:
             lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
             vendite = calcolaVenditeTotali(lista_operazioni)
@@ -191,18 +188,17 @@ class FinestraRC(QWidget):
         self.setWindowTitle("Responsabile Commerciale")
         self.resize(1200, 800)
 
-        # Layout principale
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(20, 15, 20, 20)
         main_layout.setSpacing(15)
         self.setLayout(main_layout)
 
-        # Top bar con menu utente
+        # ---------- top bar ----------
         top_bar = QFrame()
         top_bar_layout = QHBoxLayout(top_bar)
         top_bar_layout.setContentsMargins(0, 0, 0, 0)
 
-        # Bottone menu a tendina a sinistra
+        # ---------- bottone menu ----------
         self.menu_button = QPushButton("☰")
         self.menu_button.setFixedSize(40, 35)  # Dimensioni leggermente ridotte
         self.menu_button.setStyleSheet("""
@@ -224,13 +220,12 @@ class FinestraRC(QWidget):
         self.menu_button.clicked.connect(self.show_user_menu)
         top_bar_layout.addWidget(self.menu_button)
 
-        # Spacer per spingere tutto il resto a destra
         spacer = QSpacerItem(20, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         top_bar_layout.addSpacerItem(spacer)
 
         main_layout.addWidget(top_bar)
 
-        # Frame per i filtri
+        # ---------- barra filtri ----------
         filter_frame = QFrame()
         filter_frame.setObjectName("filterFrame")
         filter_frame.setMaximumHeight(60)
@@ -279,7 +274,6 @@ class FinestraRC(QWidget):
         btn_apply.clicked.connect(self.applicaFiltri)
         filter_layout.addWidget(btn_apply)
 
-        # Aggiungiamo il bottone Reset
         btn_reset = QPushButton("Reset")
         btn_reset.clicked.connect(self.reset_filtri)
         filter_layout.addWidget(btn_reset)
@@ -293,22 +287,19 @@ class FinestraRC(QWidget):
         self.show()
 
     def reset_filtri(self):
-        """Resetta tutti i campi di filtro e ripristina il grafico originale"""
-        # Resetta le combo box al primo elemento (spazio vuoto)
+        """metodo per il reset dei valori del grafico"""
+
         self.comboBox_genere.setCurrentIndex(0)
         self.comboBox_tipologia.setCurrentIndex(0)
         self.comboBox_paese.setCurrentIndex(0)
 
-        # Pulisce il campo SKU
         self.lineEdit_sku.clear()
 
-        # Ricarica il grafico con i dati originali
         self.chart.plot_data()
 
     def show_user_menu(self):
         menu = QMenu()
 
-        # Informazioni utente (non cliccabili)
         nome_completo = QAction(f"Nome: {self.user_data['nome']} {self.user_data['cognome']}", self)
         nome_completo.setEnabled(False)
         menu.addAction(nome_completo)
@@ -323,22 +314,24 @@ class FinestraRC(QWidget):
 
         menu.addSeparator()
 
-        # Azione logout
+        # ---------- logout button ----------
         logout_action = QAction("Logout", self)
         logout_action.triggered.connect(self.logout)
         menu.addAction(logout_action)
 
-        # Applica stile al menu
         menu.setStyleSheet(STYLESHEET)
 
-        # Mostra menu sotto il bottone
         menu.exec(self.menu_button.mapToGlobal(self.menu_button.rect().bottomLeft()))
 
     def logout(self):
+        """metodo per il logout"""
+
         self.logout_requested.emit()
         self.close()
 
     def applicaFiltri(self):
+        """ metodo lettura dati in input dei filtri desiderati"""
+
         try:
             lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
             lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")

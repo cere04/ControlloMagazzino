@@ -36,7 +36,6 @@ class Finestra1(QWidget):
 
         self.finestra_r = FinestraR(self)
 
-        # Applica stile
         self.setStyleSheet("""
             QWidget {
                 background-color: #ffffff;
@@ -97,7 +96,6 @@ class Finestra1(QWidget):
             }
         """)
 
-        # Attributo per tenere traccia della finestra corrente
         self.current_window = None
 
     def finestraRegistrazione(self):
@@ -112,7 +110,6 @@ class Finestra1(QWidget):
             QMessageBox.critical(self, "Errore", "Nome utente non esistente, riprovare")
             return
 
-        # Creiamo il dizionario con i dati utente nel formato corretto
         user_data = {
             'nome': user.get('nome'),
             'cognome': user.get('cognome'),

@@ -1,5 +1,5 @@
 import numpy as np
-from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import QMessageBox, QComboBox, QMenu
 from PyQt6.QtCore import pyqtSignal, QObject
@@ -214,14 +214,14 @@ class adminWindow(QObject):
         self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName("verticalLayout")
 
-        # ---------- TOP BAR A SINISTRA ----------
+        # ---------- top bar ----------
         top_bar = QtWidgets.QFrame(parent=self.centralwidget)
-        top_bar.setMaximumHeight(45)  # Aumentato per evitare tagli
+        top_bar.setMaximumHeight(45)
         top_bar_layout = QtWidgets.QHBoxLayout(top_bar)
-        top_bar_layout.setContentsMargins(10, 5, 10, 5)  # Aggiunto padding verticale
+        top_bar_layout.setContentsMargins(10, 5, 10, 5)
         top_bar_layout.setSpacing(0)
 
-        # Menu button a sinistra
+        # ---------- bottone menu ----------
         self.menu_button = QtWidgets.QPushButton(parent=top_bar)
         self.menu_button.setText("☰")
         self.menu_button.setFixedSize(40, 35)
@@ -243,21 +243,20 @@ class adminWindow(QObject):
         self.menu_button.clicked.connect(self.show_user_menu)
         top_bar_layout.addWidget(self.menu_button)
 
-        # Spacer per spingere il resto a destra
         spacer_top = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Policy.Expanding,
                                            QtWidgets.QSizePolicy.Policy.Minimum)
         top_bar_layout.addItem(spacer_top)
 
         self.verticalLayout.addWidget(top_bar)
 
-        # Contenuto principale
+        # ---------- contenuto principale ----------
         self.main_content = QtWidgets.QWidget(parent=self.centralwidget)
         self.gridLayout = QtWidgets.QGridLayout(self.main_content)
-        self.gridLayout.setContentsMargins(10, 0, 10, 10)  # Ridotto margine superiore
+        self.gridLayout.setContentsMargins(10, 0, 10, 10)
         self.gridLayout.setSpacing(10)
         self.verticalLayout.addWidget(self.main_content)
 
-        # Frame sinistro (aggiunte)
+        # ---------- frame sinistro ----------
         self.frame = QtWidgets.QFrame(parent=self.main_content)
         self.frame.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
@@ -265,7 +264,7 @@ class adminWindow(QObject):
         self.formLayout_2 = QtWidgets.QFormLayout(self.frame)
         self.formLayout_2.setObjectName("formLayout_2")
 
-        # Aggiungi Vendita
+        # ---------- form aggiunta vendita ----------
         self.label_9 = QtWidgets.QLabel(parent=self.frame)
         self.label_9.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_9.setObjectName("label_9")
@@ -286,13 +285,12 @@ class adminWindow(QObject):
         self.label_7.setObjectName("label_7")
         self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_7)
 
-        # ComboBox per il paese nella sezione Aggiungi Vendita
         self.paese_av = QComboBox(parent=self.frame)
         self.paese_av.addItem("Italia")
         self.paese_av.addItem("Germania")
         self.paese_av.addItem("Francia")
         self.paese_av.addItem("Spagna")
-        self.paese_av.setCurrentIndex(-1)  # Nessuna selezione iniziale
+        self.paese_av.setCurrentIndex(-1)
         self.formLayout_2.setWidget(3, QtWidgets.QFormLayout.ItemRole.FieldRole, self.paese_av)
 
         self.pushButton = QtWidgets.QPushButton(parent=self.frame)
@@ -303,7 +301,7 @@ class adminWindow(QObject):
                                            QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout_2.setItem(5, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem)
 
-        # Aggiungi Giacenza
+        # ---------- form aggiunta giacenza ----------
         self.label_8 = QtWidgets.QLabel(parent=self.frame)
         self.label_8.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_8.setObjectName("label_8")
@@ -332,7 +330,7 @@ class adminWindow(QObject):
                                             QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout_2.setItem(10, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem1)
 
-        # Aggiungi Articolo
+        # ---------- form aggiunta articolo ----------
         self.label_10 = QtWidgets.QLabel(parent=self.frame)
         self.label_10.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_10.setObjectName("label_10")
@@ -347,7 +345,6 @@ class adminWindow(QObject):
         self.label_12.setObjectName("label_12")
         self.formLayout_2.setWidget(13, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_12)
 
-        # ComboBox per genere nella sezione Aggiungi Articolo
         self.genere_art_add = QComboBox(parent=self.frame)
         self.genere_art_add.addItem("uomo")
         self.genere_art_add.addItem("donna")
@@ -358,7 +355,6 @@ class adminWindow(QObject):
         self.label_13.setObjectName("label_13")
         self.formLayout_2.setWidget(14, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_13)
 
-        # ComboBox per tipologia nella sezione Aggiungi Articolo
         self.tipologia_art_add = QComboBox(parent=self.frame)
         self.tipologia_art_add.addItem("calzatura")
         self.tipologia_art_add.addItem("borsa")
@@ -371,7 +367,7 @@ class adminWindow(QObject):
         self.pushButton_3.clicked.connect(self.aggiuntaArticolo)
         self.formLayout_2.setWidget(15, QtWidgets.QFormLayout.ItemRole.SpanningRole, self.pushButton_3)
 
-        # Elimina Articolo (spostato qui)
+        # ---------- form eliminazione articolo ----------
         spacerItem5 = QtWidgets.QSpacerItem(40, 10, QtWidgets.QSizePolicy.Policy.Expanding,
                                             QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout_2.setItem(16, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem5)
@@ -392,7 +388,7 @@ class adminWindow(QObject):
 
         self.gridLayout.addWidget(self.frame, 1, 2, 3, 1)
 
-        # Frame destro (modifiche)
+        # ---------- frame destro ----------
         self.frame_2 = QtWidgets.QFrame(parent=self.main_content)
         self.frame_2.setStyleSheet("QFrame#frame {\n"
                                    "    background-color: #ffffff;\\n\n"
@@ -407,7 +403,7 @@ class adminWindow(QObject):
         self.formLayout = QtWidgets.QFormLayout(self.frame_2)
         self.formLayout.setObjectName("formLayout")
 
-        # Modifica Vendita
+        # ---------- form modifica vendita ----------
         self.label = QtWidgets.QLabel(parent=self.frame_2)
         self.label.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label.setObjectName("label")
@@ -434,7 +430,6 @@ class adminWindow(QObject):
         self.label_16.setObjectName("label_16")
         self.formLayout.setWidget(4, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_16)
 
-        # ComboBox per paese nella sezione Modifica Vendita
         self.paese_vendita_edit = QComboBox(parent=self.frame_2)
         self.paese_vendita_edit.addItem("Italia")
         self.paese_vendita_edit.addItem("Germania")
@@ -451,7 +446,7 @@ class adminWindow(QObject):
                                             QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout.setItem(6, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem2)
 
-        # Modifica Giacenza
+        # ---------- form modifica giacenza ----------
         self.label_17 = QtWidgets.QLabel(parent=self.frame_2)
         self.label_17.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_17.setObjectName("label_17")
@@ -482,7 +477,7 @@ class adminWindow(QObject):
                                             QtWidgets.QSizePolicy.Policy.Minimum)
         self.formLayout.setItem(12, QtWidgets.QFormLayout.ItemRole.SpanningRole, spacerItem3)
 
-        # Modifica Articolo
+        # ---------- form modifica articolo ----------
         self.label_21 = QtWidgets.QLabel(parent=self.frame_2)
         self.label_21.setAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.label_21.setObjectName("label_21")
@@ -497,7 +492,6 @@ class adminWindow(QObject):
         self.label_23.setObjectName("label_23")
         self.formLayout.setWidget(15, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_23)
 
-        # ComboBox per genere nella sezione Modifica Articolo
         self.genere_art_edit = QComboBox(parent=self.frame_2)
         self.genere_art_edit.addItem("uomo")
         self.genere_art_edit.addItem("donna")
@@ -508,7 +502,6 @@ class adminWindow(QObject):
         self.label_24.setObjectName("label_24")
         self.formLayout.setWidget(16, QtWidgets.QFormLayout.ItemRole.LabelRole, self.label_24)
 
-        # ComboBox per tipologia nella sezione Modifica Articolo
         self.tipologia_art_edit = QComboBox(parent=self.frame_2)
         self.tipologia_art_edit.addItem("calzatura")
         self.tipologia_art_edit.addItem("borsa")
@@ -526,7 +519,7 @@ class adminWindow(QObject):
 
         self.gridLayout.addWidget(self.frame_2, 1, 3, 3, 1)
 
-        # Area grafico e filtri
+        # ---------- frame visualizzazione grafico ----------
         self.widget = QtWidgets.QWidget(parent=self.main_content)
         self.widget.setMinimumSize(QtCore.QSize(0, 0))
         self.widget.setMaximumSize(QtCore.QSize(16777215, 16777215))
@@ -534,7 +527,7 @@ class adminWindow(QObject):
         self.gridLayout_2 = QtWidgets.QGridLayout(self.widget)
         self.gridLayout_2.setObjectName("gridLayout_2")
 
-        # Barra filtri
+        # ---------- filtri ----------
         self.frame_3 = QtWidgets.QFrame(parent=self.widget)
         self.frame_3.setFrameShape(QtWidgets.QFrame.Shape.StyledPanel)
         self.frame_3.setFrameShadow(QtWidgets.QFrame.Shadow.Raised)
@@ -603,7 +596,6 @@ class adminWindow(QObject):
         self.pushButton_8.clicked.connect(self.applicaFiltri)
         self.horizontalLayout.addWidget(self.pushButton_8)
 
-        # Pulsante Reset
         self.btn_reset = QtWidgets.QPushButton(parent=self.frame_3)
         self.btn_reset.setObjectName("btn_reset")
         self.btn_reset.setText("Reset")
@@ -612,7 +604,7 @@ class adminWindow(QObject):
 
         self.gridLayout_2.addWidget(self.frame_3, 0, 1, 1, 1)
 
-        # Grafico
+        # ---------- grafico ----------
         self.graphicsView = BarChartCanvas(self.widget)
         self.graphicsView.setMaximumSize(QtCore.QSize(16777215, 700))
         self.graphicsView.setStyleSheet("none")
@@ -636,6 +628,8 @@ class adminWindow(QObject):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def show_user_menu(self):
+        """metodo per la visualizzazione dei dati utente nel menu a tendina"""
+
         menu = QMenu(self.centralwidget)
         menu.setStyleSheet("""
             QMenu {
@@ -666,7 +660,6 @@ class adminWindow(QObject):
             }
         """)
 
-        # Informazioni utente (non cliccabili)
         nome_completo = QAction(f"Nome: {self.user_data['nome']} {self.user_data['cognome']}", self.centralwidget)
         nome_completo.setEnabled(False)
         menu.addAction(nome_completo)
@@ -681,15 +674,16 @@ class adminWindow(QObject):
 
         menu.addSeparator()
 
-        # Azione logout
+        # ---------- logout button ----------
         logout_action = QAction("Logout", self.centralwidget)
         logout_action.triggered.connect(self.logout)
         menu.addAction(logout_action)
 
-        # Mostra menu sotto il bottone (a sinistra)
         menu.exec(self.menu_button.mapToGlobal(self.menu_button.rect().bottomLeft()))
 
     def logout(self):
+        """metodo per il logout"""
+
         self.logout_requested.emit()
 
     def retranslateUi(self, MainWindow):
@@ -742,16 +736,16 @@ class adminWindow(QObject):
         self.comboBox_2.setCurrentIndex(0)
         self.comboBox_3.setCurrentIndex(0)
 
-        # Pulisce il campo SKU
         self.lineEdit_17.clear()
 
-        # Ricarica il grafico con i dati originali
         self.graphicsView.plot_data()
 
     def aggiuntaVendita(self):
+        """ metodo lettura dati in input per l'aggiunta di una vendita"""
+
         SKU_AV = self.lineEdit_5.text()
         N_AV = self.spinBox.value()
-        P_AV = self.paese_av.currentText()  # Prendi il paese dalla combobox
+        P_AV = self.paese_av.currentText()
 
         if SKU_AV == '' or P_AV == '':
             QMessageBox.critical(
@@ -788,7 +782,6 @@ class adminWindow(QObject):
                 'Successo',
                 'Vendita aggiunta con successo'
             )
-            # Reset dei campi
             self.lineEdit_5.clear()
             self.spinBox.setValue(0)
             self.paese_av.setCurrentIndex(-1)
@@ -800,6 +793,8 @@ class adminWindow(QObject):
             )
 
     def aggiuntaGiacenza(self):
+        """ metodo lettura dati in input per l'aggiunta di una giacenza"""
+
         SKU_AG = self.lineEdit_3.text()
         N_AG = self.spinBox_2.value()
 
@@ -838,7 +833,6 @@ class adminWindow(QObject):
                 'Successo',
                 'Giacenza aggiunta con successo'
             )
-            # Reset dei campi
             self.lineEdit_3.clear()
             self.spinBox_2.setValue(0)
         except Exception as e:
@@ -849,11 +843,12 @@ class adminWindow(QObject):
             )
 
     def aggiuntaArticolo(self):
-        SKU_ART = self.lineEdit_4.text()
-        GENERE_ART = self.genere_art_add.currentText()  # Prendi genere dalla combobox
-        TIPO_ART = self.tipologia_art_add.currentText()  # Prendi tipologia dalla combobox
+        """ metodo lettura dati in input per l'aggiunta di un articolo"""
 
-        # Controllo campi vuoti
+        SKU_ART = self.lineEdit_4.text()
+        GENERE_ART = self.genere_art_add.currentText()
+        TIPO_ART = self.tipologia_art_add.currentText()
+
         if not all([SKU_ART, GENERE_ART, TIPO_ART]):
             QMessageBox.critical(
                 self.centralwidget,
@@ -862,7 +857,6 @@ class adminWindow(QObject):
             )
             return
 
-        # Controllo genere valido (dovrebbe essere già garantito dalla combobox)
         if GENERE_ART.lower() not in ["uomo", "donna"]:
             QMessageBox.critical(
                 self.centralwidget,
@@ -871,7 +865,6 @@ class adminWindow(QObject):
             )
             return
 
-        # Controllo tipologia valida (dovrebbe essere già garantito dalla combobox)
         tipologie_valide = ["calzatura", "borsa", "abbigliamento"]
         if TIPO_ART.lower() not in tipologie_valide:
             QMessageBox.critical(
@@ -900,7 +893,6 @@ class adminWindow(QObject):
                 'Successo',
                 'Articolo aggiunto con successo'
             )
-            # Reset dei campi
             self.lineEdit_4.clear()
             self.genere_art_add.setCurrentIndex(-1)
             self.tipologia_art_add.setCurrentIndex(-1)
@@ -912,12 +904,13 @@ class adminWindow(QObject):
             )
 
     def modificaVendita(self):
+        """ metodo lettura dati in input per la modifica di una vendita"""
+
         ID_OP = self.lineEdit_9.text()
         SKU_MV = self.lineEdit.text()
         QTA_MV = self.spinBox_3.value()
-        PAESE_MV = self.paese_vendita_edit.currentText()  # Prendi paese dalla combobox
+        PAESE_MV = self.paese_vendita_edit.currentText()
 
-        # Controllo campi obbligatori
         if not ID_OP or not SKU_MV:
             QMessageBox.critical(
                 self.centralwidget,
@@ -934,7 +927,6 @@ class adminWindow(QObject):
             )
             return
 
-        # Verifica esistenza SKU
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         sku_exists = any(art['sku'] == SKU_MV for art in lista_articoli)
 
@@ -969,7 +961,6 @@ class adminWindow(QObject):
                     'Successo',
                     'Vendita modificata con successo'
                 )
-                # Reset dei campi
                 self.lineEdit_9.clear()
                 self.lineEdit.clear()
                 self.spinBox_3.setValue(0)
@@ -989,11 +980,12 @@ class adminWindow(QObject):
             )
 
     def modificaGiacenza(self):
+        """ metodo lettura dati in input per la modifica di una giacenza"""
+
         ID_OP = self.lineEdit_11.text()
         SKU_MG = self.lineEdit_12.text()
         QTA_MG = self.spinBox_4.value()
 
-        # Controllo campi obbligatori
         if not ID_OP or not SKU_MG:
             QMessageBox.critical(
                 self.centralwidget,
@@ -1010,7 +1002,6 @@ class adminWindow(QObject):
             )
             return
 
-        # Verifica esistenza SKU
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         sku_exists = any(art['sku'] == SKU_MG for art in lista_articoli)
 
@@ -1045,7 +1036,6 @@ class adminWindow(QObject):
                     'Successo',
                     'Giacenza modificata con successo'
                 )
-                # Reset dei campi
                 self.lineEdit_11.clear()
                 self.lineEdit_12.clear()
                 self.spinBox_4.setValue(0)
@@ -1064,11 +1054,12 @@ class adminWindow(QObject):
             )
 
     def modificaArticolo(self):
-        SKU_ART = self.lineEdit_14.text()
-        GENERE_SKU = self.genere_art_edit.currentText()  # Prendi genere dalla combobox
-        TIPO_ART = self.tipologia_art_edit.currentText()  # Prendi tipologia dalla combobox
+        """ metodo lettura dati in input per la modifica di un articolo"""
 
-        # Controllo campi vuoti
+        SKU_ART = self.lineEdit_14.text()
+        GENERE_SKU = self.genere_art_edit.currentText()
+        TIPO_ART = self.tipologia_art_edit.currentText()
+
         if not all([SKU_ART, GENERE_SKU, TIPO_ART]):
             QMessageBox.critical(
                 self.centralwidget,
@@ -1077,7 +1068,6 @@ class adminWindow(QObject):
             )
             return
 
-        # Verifica esistenza SKU
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         sku_exists = any(art['sku'] == SKU_ART for art in lista_articoli)
 
@@ -1089,7 +1079,6 @@ class adminWindow(QObject):
             )
             return
 
-        # Controllo genere valido (dovrebbe essere già garantito dalla combobox)
         if GENERE_SKU.lower() not in ["uomo", "donna"]:
             QMessageBox.critical(
                 self.centralwidget,
@@ -1098,7 +1087,6 @@ class adminWindow(QObject):
             )
             return
 
-        # Controllo tipologia valida (dovrebbe essere già garantito dalla combobox)
         tipologie_valide = ["calzatura", "borsa", "abbigliamento"]
         if TIPO_ART.lower() not in tipologie_valide:
             QMessageBox.critical(
@@ -1116,7 +1104,6 @@ class adminWindow(QObject):
                 'Successo',
                 'Articolo modificato con successo'
             )
-            # Reset dei campi
             self.lineEdit_14.clear()
             self.genere_art_edit.setCurrentIndex(-1)
             self.tipologia_art_edit.setCurrentIndex(-1)
@@ -1128,6 +1115,8 @@ class adminWindow(QObject):
             )
 
     def eliminaArticolo(self):
+        """ metodo lettura dati in input per l'eliminazione di un articolo"""
+
         SKU_ART = self.lineEdit_18.text()
 
         if not SKU_ART:
@@ -1138,7 +1127,6 @@ class adminWindow(QObject):
             )
             return
 
-        # Verifica esistenza SKU
         lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
         sku_exists = any(art['sku'] == SKU_ART for art in lista_articoli)
 
@@ -1151,7 +1139,6 @@ class adminWindow(QObject):
             return
 
         try:
-            # Conferma eliminazione
             confirm = QMessageBox.question(
                 self.centralwidget,
                 'Conferma eliminazione',
@@ -1176,6 +1163,8 @@ class adminWindow(QObject):
             )
 
     def applicaFiltri(self):
+        """ metodo lettura dati in input dei filtri desiderati"""
+
         try:
             lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
             lista_articoli = letturaDatabaseArticoli("Model/databaseArticoli.txt")
@@ -1221,13 +1210,11 @@ class BarChartCanvas(FigureCanvas):
             border: 1px solid #e0e6ed;
         """)
 
-        # Dati iniziali
         self.plot_data()
 
     def plot_data(self, vendite=None, giacenze=None):
         mesi = ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"]
 
-        # Se nessun dato fornito, carica quelli dal database
         if vendite is None or giacenze is None:
             lista_operazioni = letturaDatabaseOperazioni("Model/databaseOperazioni.txt")
             vendite = calcolaVenditeTotali(lista_operazioni)
@@ -1265,6 +1252,8 @@ class BarChartCanvas(FigureCanvas):
         self.draw()
 
     def update_data(self, lista_operazioni):
+        """metodo per l'aggiornamento dei valori del grafico una volta applicati i filtri"""
+
         vendite = calcolaVenditeTotali(lista_operazioni)
         giacenze = [giacenzaMediaMensile(ordinamentoOperazioni(lista_operazioni, i + 1), i + 1) for i in range(12)]
         self.plot_data(vendite, giacenze)
